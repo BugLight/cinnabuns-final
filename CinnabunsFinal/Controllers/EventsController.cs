@@ -59,6 +59,13 @@ namespace CinnabunsFinal.Controllers
             return e;
         }
 
+        [HttpGet("{id}")]
+        public ActionResult<Event> GetEvent(int id)
+        {
+            return context.Events.Find(id) ?? (ActionResult<Event>)NotFound();
+        }
+
+
         // Function for editing event
         [HttpPut("{id}")]
         public ActionResult<Event> EditEvent([FromBody] Event newE, int id)
