@@ -52,6 +52,11 @@ namespace CinnabunsFinal.Controllers
                 return NotFound();
 
             contact.Name = newContact.Name;
+            contact.Surname = newContact.Surname;
+            contact.Patronymic = newContact.Patronymic;
+            contact.PartnerId = newContact.PartnerId;
+            contact.ContactPhone = newContact.ContactPhone;
+            contact.ContactEmail = newContact.ContactEmail;
             context.SaveChanges();
 
             return contact;

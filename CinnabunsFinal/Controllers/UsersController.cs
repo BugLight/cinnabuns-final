@@ -55,6 +55,10 @@ namespace CinnabunsFinal.Controllers
                 return NotFound();
 
             user.Name = newUser.Name;
+            user.Surname = newUser.Surname;
+            user.Patronymic = newUser.Patronymic;
+            user.Phone = newUser.Phone;
+            user.Login = newUser.Login;
             context.SaveChanges();
 
             return user;

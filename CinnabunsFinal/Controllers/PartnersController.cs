@@ -41,7 +41,7 @@ namespace CinnabunsFinal.Controllers
 
         // Function for editing partner
         [HttpPut("{id}")]
-        public ActionResult<Partner> EditPartner([FromBody] Tag newPartner, int id)
+        public ActionResult<Partner> EditPartner([FromBody] Partner newPartner, int id)
         {
             if (newPartner == null)
                 return BadRequest();
@@ -52,6 +52,13 @@ namespace CinnabunsFinal.Controllers
                 return NotFound();
 
             partner.Name = newPartner.Name;
+            partner.INN = newPartner.INN;
+            partner.Site = newPartner.Site;
+            partner.Site = newPartner.Surname;
+            partner.Patronymic = newPartner.Patronymic;
+            partner.Phone = newPartner.Phone;
+            partner.Email = newPartner.Email;
+            partner.Description = newPartner.Description;
             context.SaveChanges();
 
             return partner;

@@ -41,7 +41,7 @@ namespace CinnabunsFinal.Controllers
 
         // Function for editing event
         [HttpPut("{id}")]
-        public ActionResult<Event> EditEvent([FromBody] Tag newE, int id)
+        public ActionResult<Event> EditEvent([FromBody] Event newE, int id)
         {
             if (newE == null)
                 return BadRequest();
@@ -52,6 +52,9 @@ namespace CinnabunsFinal.Controllers
                 return NotFound();
 
             e.Name = newE.Name;
+            e.BeginDate = newE.BeginDate;
+            e.EndDate = newE.EndDate;
+            e.Description = newE.Description;
             context.SaveChanges();
 
             return e;
