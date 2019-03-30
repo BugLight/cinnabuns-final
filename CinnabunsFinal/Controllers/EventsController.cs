@@ -58,14 +58,14 @@ namespace CinnabunsFinal.Controllers
             context.Events.Add(e);
             context.SaveChanges();
 
-            return context.Events.Include(x => x.EventPartners).Where(x => x.Id == e.Id).First();
+            return context.Events.Include(x => x.EventPartners).FirstOrDefault(x => x.Id == e.Id);
         }
 
         [HttpGet("{id}")]
         public ActionResult<Event> GetEvent(int id)
         {
             return context.Events.Include(e => e.EventPartners)
-                .Where(e => e.Id == id).First() ?? 
+                .FirstOrDefault(e => e.Id == id) ?? 
                 (ActionResult<Event>)NotFound();
         }
 
@@ -88,7 +88,7 @@ namespace CinnabunsFinal.Controllers
             e.Description = newE.Description;
             context.SaveChanges();
 
-            return context.Events.Include(x => x.EventPartners).Where(x => x.Id == e.Id).First();
+            return context.Events.Include(x => x.EventPartners).FirstOrDefault(x => x.Id == e.Id);
         }
 
         // Function for deleting event
