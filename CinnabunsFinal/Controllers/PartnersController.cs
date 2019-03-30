@@ -44,6 +44,12 @@ namespace CinnabunsFinal.Controllers
             };
         }
 
+        [HttpGet("{id}")]
+        public ActionResult<Partner> GetPartners(int id)
+        {
+            return context.Partners.Find(id) ?? (ActionResult<Partner>)NotFound();
+        }
+
         // Functions for adding partner
         [HttpPost]
         public ActionResult<Partner> AddPartner([FromBody] Partner partner)
