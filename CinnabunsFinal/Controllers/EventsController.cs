@@ -1,5 +1,7 @@
 ﻿using CinnabunsFinal.DTO;
 using CinnabunsFinal.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -11,10 +13,12 @@ namespace CinnabunsFinal.Controllers
     public class EventsController : Controller
     {
         private readonly AppContext context;
+        private readonly UserManager<User> userManager;
 
-        public EventsController(AppContext context)
+        public EventsController(AppContext context, UserManager<User> userManager)
         {
             this.context = context;
+            this.userManager = userManager;
         }
 
         // Functions for getting events
@@ -49,6 +53,7 @@ namespace CinnabunsFinal.Controllers
 
         // Functions for adding event
         [HttpPost]
+        [Authorize(Roles="admin,organizer")]
         public ActionResult<Event> AddEvent([FromBody] Event e)
         {
             if (e == null)
@@ -72,12 +77,19 @@ namespace CinnabunsFinal.Controllers
 
         // Function for editing event
         [HttpPut("{id}")]
+        [Authorize(Roles="admin,organizer")]
         public ActionResult<Event> EditEvent([FromBody] Event newE, int id)
         {
             if (newE == null)
                 return BadRequest();
 
             var e = context.Events.Find(id);
+
+            var user = Models.User.GetCurrentUser(userManager, HttpContext.User);
+            var role = user.GetRole(userManager);
+
+            if (role != "admin" && role != "organizer")
+                return Forbid();
 
             if (e == null)
                 return NotFound();
@@ -93,6 +105,7 @@ namespace CinnabunsFinal.Controllers
 
         // Function for deleting event
         [HttpDelete("{id}")]
+        [Authorize(Roles="admin")]
         public ActionResult DeleteEvent(int id)
         {
             var e = context.Events.Find(id);

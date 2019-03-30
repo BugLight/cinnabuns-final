@@ -39,7 +39,7 @@ namespace CinnabunsFinal.Controllers
             var user = Models.User.GetCurrentUser(userManager, HttpContext.User);
             var role = user.GetRole(userManager);
 
-            if (role != "admin" && contact.PartnerId != user.Id)
+            if (role != "admin" && role != "organizer")
                 return Forbid();
 
             context.Contacts.Add(contact);
@@ -60,7 +60,7 @@ namespace CinnabunsFinal.Controllers
             var user = Models.User.GetCurrentUser(userManager, HttpContext.User);
             var role = user.GetRole(userManager);
 
-            if (role != "admin" && contact.PartnerId != user.Id)
+            if (role != "admin" && role != "organizer")
                 return Forbid();
 
             if (contact == null)
@@ -88,7 +88,7 @@ namespace CinnabunsFinal.Controllers
             var user = Models.User.GetCurrentUser(userManager, HttpContext.User);
             var role = user.GetRole(userManager);
 
-            if (role != "admin" && contact.PartnerId != user.Id)
+            if (role != "admin" && role != "organizer")
                 return Forbid();
 
             context.Contacts.Remove(contact);

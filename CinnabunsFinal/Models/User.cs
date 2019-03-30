@@ -13,7 +13,7 @@ namespace CinnabunsFinal.Models
         [NotMapped]
         public readonly static string AdminRole = "admin";
         [NotMapped]
-        public readonly static string OrganizerRole = "organizeer";
+        public readonly static string OrganizerRole = "organizer";
         [NotMapped]
         public readonly static string VolunteerRole = "volunteer";
 
