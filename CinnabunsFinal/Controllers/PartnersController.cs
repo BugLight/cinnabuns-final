@@ -17,11 +17,17 @@ namespace CinnabunsFinal.Controllers
 
         // Functions for getting partners
         [HttpGet]
-        public PageResult<Partner> GetPartners([FromQuery] PageFrame pageFrame)
+        public PageResult<Partner> GetPartners([FromQuery] PageFrame pageFrame, [FromQuery] string[] tags)
         {
+            var query = from p in context.Partners
+                        join tp in context.TagPartners on p.Id equals tp.PartnerId
+                        join t in context.Tags on tp.TagId equals t.Id
+                        where tags.Contains(t.Name)
+                        select p;
+
             return new PageResult<Partner>
             {
-                Data = new PageFrameDb<Partner>().FrameDb(context.Partners.AsQueryable(), pageFrame).ToList(),
+                Data = new PageFrameDb<Partner>().FrameDb(query, pageFrame).ToList(),
                 TotalCount = context.Partners.Count()
             };
         }
