@@ -5,10 +5,10 @@ EXPOSE 443
 
 FROM node:10 AS build-front
 WORKDIR /app
+COPY CinnabunsFinal/ClientApp/package*.json ./
+RUN npm install
 COPY CinnabunsFinal/ClientApp .
-#COPY CinnabunsFinal/build-front.sh .
-RUN npm install && \
-	npm run build && ls -l dist/*
+RUN npm run build
 
 FROM microsoft/dotnet:2.1-sdk AS build
 WORKDIR /src
@@ -21,7 +21,6 @@ COPY --from=build-front /app/dist /app/ClientApp/dist
 
 FROM build AS publish
 RUN dotnet publish "CinnabunsFinal.csproj" -c Release -o /app
-RUN ls -l /app/*
 
 FROM base AS final
 COPY --from=publish /app .

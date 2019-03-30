@@ -10,11 +10,17 @@ services:
       dockerfile: Dockerfile
     expose:
       - 80
-#    ports:
-#      - 5000:80
+    ports:
+      - 5000:80
     env_file: app.env
     labels:
       traefik.enable: "true"
       traefik.backend: "cinnabuns.hack"
       traefik.port: "80"
       traefik.frontend.rule: "Host:${HOST}"
+    
+  pg:
+    image: postgres:11
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: toor
