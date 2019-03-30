@@ -2,7 +2,6 @@
 using CinnabunsFinal.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CinnabunsFinal.Controllers
 {
@@ -27,7 +26,7 @@ namespace CinnabunsFinal.Controllers
             };
         }
 
-        // Functions for adding tags
+        // Functions for adding tag
         [HttpPost]
         public ActionResult<Tag> AddTag([FromBody] Tag tag)
         {
@@ -40,7 +39,7 @@ namespace CinnabunsFinal.Controllers
             return tag;
         }
 
-        // Function for editing tags
+        // Function for editing tag
         [HttpPut("{id}")]
         public ActionResult<Tag> EditTag([FromBody] Tag newTag, int id)
         {
@@ -58,7 +57,7 @@ namespace CinnabunsFinal.Controllers
             return tag;
         }
 
-        // Function for deleting tags
+        // Function for deleting tag
         [HttpDelete("{id}")]
         public ActionResult DeleteTag(int id)
         {
