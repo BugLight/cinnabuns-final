@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace CinnabunsFinal.Models
 {
@@ -24,6 +25,9 @@ namespace CinnabunsFinal.Models
         public string Email { get; set; }
         // Description of individual
         public string Description { get; set; }
+
+        [JsonIgnore]
+        public bool Deleted { get; set; } = false;
 
         public List<TagPartner> TagPartners { get; set; }
         public List<EventPartner> EventPartners { get; set; }
