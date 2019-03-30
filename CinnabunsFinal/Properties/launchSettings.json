@@ -1,4 +1,4 @@
-﻿{
+{
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
@@ -13,6 +13,7 @@
       "launchBrowser": true,
       "launchUrl": "http://localhost:3000",
       "environmentVariables": {
+        "DBCONNECTION": "Server=localhost;Port=5432;Database=cinnabuns;Username=web_app;Password=1234",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "applicationUrl": "http://localhost:5000"

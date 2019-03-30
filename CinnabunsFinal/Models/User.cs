@@ -1,6 +1,8 @@
-﻿namespace CinnabunsFinal.Models
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace CinnabunsFinal.Models
 {
-    public class User
+    public class User : IdentityUser<int>
     {
         // Name of user
         public string Name { get; set; }
@@ -10,7 +12,5 @@
         public string Patronymic { get; set; }
         // Phone of user
         public string Phone { get; set; }
-        // Login of user
-        public string Login { get; set; }
     }
 }

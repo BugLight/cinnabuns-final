@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using CinnabunsFinal.Models;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using VueCliMiddleware;
@@ -28,6 +31,15 @@ namespace CinnabunsFinal
             });
 
             services.AddCors();
+
+            services.AddEntityFrameworkNpgsql()
+                .AddDbContext<AppContext>(options =>
+                {
+                    options.UseNpgsql(Configuration["DBCONNECTION"]);
+                });
+
+            services.AddIdentity<User, IdentityRole<int>>()
+                .AddEntityFrameworkStores<AppContext>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
