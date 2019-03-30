@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CinnabunsFinal.Models
@@ -27,7 +28,9 @@ namespace CinnabunsFinal.Models
         public User Assigner { get; set; }
         // Id of partner
         public int PartnerId { get; set; }
+        public Partner Partner { get; set; }
         // Id of event
         public int EventId { get; set; }
+        public Event Event { get; set; }
     }
 }
