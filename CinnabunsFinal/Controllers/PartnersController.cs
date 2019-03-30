@@ -1,6 +1,7 @@
 ﻿using CinnabunsFinal.DTO;
 using CinnabunsFinal.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace CinnabunsFinal.Controllers
@@ -17,13 +18,37 @@ namespace CinnabunsFinal.Controllers
 
         // Functions for getting partners
         [HttpGet]
-        public PageResult<Partner> GetPartners([FromQuery] PageFrame pageFrame)
+        public PageResult<Partner> GetPartners([FromQuery] PageFrame pageFrame, [FromQuery] string[] tags)
         {
+            if (tags.Length == 0)
+            {
+                var q = from p in context.Partners
+                        select p;
+
+                return new PageResult<Partner>
+                {
+                    Data = new PageFrameDb<Partner>().FrameDb(q, pageFrame).ToList(),
+                    TotalCount = context.Partners.Count()
+                };
+            }
+
+            var query = from p in context.Partners
+                        join tp in context.TagPartners on p.Id equals tp.PartnerId
+                        join t in context.Tags on tp.TagId equals t.Id
+                        where tags.Contains(t.Name)
+                        select p;
+
             return new PageResult<Partner>
             {
-                Data = new PageFrameDb<Partner>().FrameDb(context.Partners.AsQueryable(), pageFrame).ToList(),
-                TotalCount = context.Partners.Count()
+                Data = new PageFrameDb<Partner>().FrameDb(query, pageFrame).ToList(),
+                TotalCount = query.Count()
             };
+        }
+
+        [HttpGet("{id}")]
+        public ActionResult<Partner> GetPartners(int id)
+        {
+            return context.Partners.Find(id) ?? (ActionResult<Partner>)NotFound();
         }
 
         // Functions for adding partner
@@ -77,6 +102,23 @@ namespace CinnabunsFinal.Controllers
             context.SaveChanges();
 
             return Ok();
+        }
+
+        // Functions for getting the best partners
+        [HttpGet("top")]
+        public List<Partner> GetTopPartners()
+        {
+            var keys = from p in context.Partners
+                       join ep in context.EventPartners on p.Id equals ep.PartnerId
+                       group p by p.Id into table
+                       select new { table.Key, Count = table.Count() };
+
+            var query = (from p in context.Partners
+                         join k in keys on p.Id equals k.Key
+                         orderby k.Count descending
+                         select p).Take(10);
+
+            return query.ToList();
         }
     }
 }

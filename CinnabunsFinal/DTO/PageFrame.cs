@@ -10,7 +10,6 @@ namespace CinnabunsFinal.DTO
     {
         public int Limit { get; set; } = 10;
         public int Offset { get; set; } = 0;
-        public int? FromId { get; set; }
     }
 
     public class PageFrameValidator : AbstractValidator<PageFrame>
@@ -18,7 +17,7 @@ namespace CinnabunsFinal.DTO
         public PageFrameValidator()
         {
             RuleFor(x => x.Limit).NotNull().GreaterThan(0).LessThanOrEqualTo(100);
-            RuleFor(x => x.Offset).NotNull().GreaterThanOrEqualTo(0).When(x => x.FromId == null);
+            RuleFor(x => x.Offset).NotNull().GreaterThanOrEqualTo(0);
         }
     }
 

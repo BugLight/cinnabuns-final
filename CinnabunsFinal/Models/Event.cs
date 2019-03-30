@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace CinnabunsFinal.Models
 {
@@ -19,8 +21,12 @@ namespace CinnabunsFinal.Models
         public string Description { get; set; }
 
         [JsonIgnore]
+        [JsonIgnore]
         public bool Deleted { get; set; } = false;
 
         public List<EventPartner> EventPartners { get; set; }
+
+        [NotMapped]
+        public List<int> PartnerIds => EventPartners?.Select(ep => ep.EventId).ToList();
     }
 }

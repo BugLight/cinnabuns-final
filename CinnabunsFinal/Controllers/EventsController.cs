@@ -1,11 +1,13 @@
 ﻿using CinnabunsFinal.DTO;
 using CinnabunsFinal.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 
 namespace CinnabunsFinal.Controllers
 {
-    [Route("api/evens")]
+    [Route("api/events")]
     public class EventsController : Controller
     {
         private readonly AppContext context;
@@ -17,12 +19,31 @@ namespace CinnabunsFinal.Controllers
 
         // Functions for getting events
         [HttpGet]
-        public PageResult<Event> GetEvents([FromQuery] PageFrame pageFrame)
+        public PageResult<Event> GetEvents([FromQuery] PageFrame pageFrame, [FromQuery] DateTime? beginDate, [FromQuery] DateTime? endDate)
         {
-            return new PageResult<Event>
+            var query = from e in context.Events.Include(e => e.EventPartners)
+                        orderby e.BeginDate descending
+                        select e;
+
+            if (beginDate != null)
             {
-                Data = new PageFrameDb<Event>().FrameDb(context.Events.AsQueryable(), pageFrame).ToList(),
-                TotalCount = context.Events.Count()
+                query = from e in query
+                        where beginDate <= e.BeginDate
+                        orderby e.BeginDate descending
+                        select e;
+            }
+            if (endDate != null)
+            {
+                query = from e in query
+                        where endDate >= e.BeginDate
+                        orderby e.BeginDate descending
+                        select e;
+            }
+
+            return new PageResult<Event>
+            {       
+                Data = new PageFrameDb<Event>().FrameDb(query, pageFrame).ToList(),
+                TotalCount = query.Count()
             };
         }
 
@@ -33,11 +54,21 @@ namespace CinnabunsFinal.Controllers
             if (e == null)
                 return BadRequest();
 
+            e.Id = 0;
             context.Events.Add(e);
             context.SaveChanges();
 
-            return e;
+            return context.Events.Include(x => x.EventPartners).Where(x => x.Id == e.Id).First();
         }
+
+        [HttpGet("{id}")]
+        public ActionResult<Event> GetEvent(int id)
+        {
+            return context.Events.Include(e => e.EventPartners)
+                .Where(e => e.Id == id).First() ?? 
+                (ActionResult<Event>)NotFound();
+        }
+
 
         // Function for editing event
         [HttpPut("{id}")]
@@ -57,7 +88,7 @@ namespace CinnabunsFinal.Controllers
             e.Description = newE.Description;
             context.SaveChanges();
 
-            return e;
+            return context.Events.Include(x => x.EventPartners).Where(x => x.Id == e.Id).First();
         }
 
         // Function for deleting event
