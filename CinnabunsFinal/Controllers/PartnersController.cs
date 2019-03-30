@@ -102,12 +102,15 @@ namespace CinnabunsFinal.Controllers
         [HttpGet("top")]
         public List<Partner> GetTopPartners()
         {
+            var keys = from p in context.Partners
+                       join ep in context.EventPartners on p.Id equals ep.PartnerId
+                       group p by p.Id into table
+                       select new { table.Key, Count = table.Count() };
+
             var query = (from p in context.Partners
-                         join ep in context.EventPartners on p.Id equals ep.PartnerId
-                         join e in context.Events on ep.EventId equals e.Id
-                         group e by p into table
-                         orderby table.Count() descending
-                         select table.Key).Take(10);
+                         join k in keys on p.Id equals k.Key
+                         orderby k.Count descending
+                         select p).Take(10);
 
             return query.ToList();
         }
