@@ -3,7 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.489
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CinnabunsFinal", "CinnabunsFinal\CinnabunsFinal.csproj", "{C78BF077-1270-484C-82F8-CD684D1B8059}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CinnabunsFinal", "CinnabunsFinal\CinnabunsFinal.csproj", "{C78BF077-1270-484C-82F8-CD684D1B8059}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{ADE46236-E5BC-4636-B167-82B98DB3F136}"
+	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
