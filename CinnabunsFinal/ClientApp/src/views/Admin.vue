@@ -1,7 +1,25 @@
 <template>
     <div class="main">
-        <div class="container-fluid" v-if="isAuthenticated">
-            
+        <div class="container-fluid" v-if="!isAuthenticated">
+            <div v-bind:id="role" v-if="role === roles.admin">
+                <admin-header></admin-header>
+                <events v-if="activeAdminPage === 'events'"></events>
+                <partners v-else-if="activeAdminPage === 'partners'"></partners>
+                <tags v-else-if="activeAdminPage === 'tags'"></tags>
+                <tasks v-else-if="activeAdminPage === 'tasks'"></tasks>
+                <users v-else-if="activeAdminPage === 'users'"></users>
+                <events v-else></events>
+            </div>
+            <div v-bind:id="role" v-else-if="role === roles.organizer">
+                <admin-header></admin-header>
+                <events></events>
+                <tasks></tasks>
+            </div>
+            <div v-bind:id="role" v-else-if="role === roles.volunteer">
+                <admin-header></admin-header>
+                <tasks></tasks>
+                <partners></partners>
+            </div>
         </div>
         <div class="container-fluid row justify-content-center align-items-center auth" v-else>
             <div class="auth-control">
@@ -34,6 +52,14 @@
                 password: ''
             }
         },
+        components: {
+            Events: () => import('../components/Events.vue'),
+            Partners: () => import('../components/Partners.vue'),
+            Tags: () => import('../components/Tags.vue'),
+            Tasks: () => import('../components/Tasks.vue'),
+            Users: () => import('../components/Users.vue'),
+            AdminHeader: () => import('../components/AdminHeader.vue')
+        },
         methods:{
             login: function() {
                 this.$store.dispatch('auth', {
@@ -52,7 +78,7 @@
             }, 
         },
         computed: {
-            ...mapGetters(['isAuthenticated'])
+            ...mapGetters(['isAuthenticated', 'role', 'roles', 'activeAdminPage'])
         }
     }
 </script>
