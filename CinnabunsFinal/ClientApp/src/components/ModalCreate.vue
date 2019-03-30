@@ -93,7 +93,7 @@
                         description: this.description
                     }).then(res => {
                         alert('Создание прошло успешно');
-                        this.closeModal(    )
+                        this.closeModal()
                     }, e => {
                         alert('Во время создания произошла ошибка')
                     })

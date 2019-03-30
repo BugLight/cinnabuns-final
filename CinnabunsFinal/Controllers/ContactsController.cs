@@ -1,5 +1,6 @@
 ﻿using CinnabunsFinal.DTO;
 using CinnabunsFinal.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 
@@ -9,10 +10,12 @@ namespace CinnabunsFinal.Controllers
     public class ContactsController : Controller
     {
         private readonly AppContext context;
+        private readonly UserManager<User> userManager;
 
-        public ContactsController(AppContext context)
+        public ContactsController(AppContext context, UserManager<User> userManager)
         {
             this.context = context;
+            this.userManager = userManager;
         }
 
         // Functions for getting contacts
@@ -33,6 +36,12 @@ namespace CinnabunsFinal.Controllers
             if (contact == null)
                 return BadRequest();
 
+            var user = Models.User.GetCurrentUser(userManager, HttpContext.User);
+            var role = user.GetRole(userManager);
+
+            if (role != "admin" && contact.PartnerId != user.Id)
+                return Forbid();
+
             context.Contacts.Add(contact);
             context.SaveChanges();
 
@@ -48,13 +57,18 @@ namespace CinnabunsFinal.Controllers
 
             var contact = context.Contacts.Find(id);
 
+            var user = Models.User.GetCurrentUser(userManager, HttpContext.User);
+            var role = user.GetRole(userManager);
+
+            if (role != "admin" && contact.PartnerId != user.Id)
+                return Forbid();
+
             if (contact == null)
                 return NotFound();
 
             contact.Name = newContact.Name;
             contact.Surname = newContact.Surname;
             contact.Patronymic = newContact.Patronymic;
-            contact.PartnerId = newContact.PartnerId;
             contact.ContactPhone = newContact.ContactPhone;
             contact.ContactEmail = newContact.ContactEmail;
             context.SaveChanges();
@@ -70,6 +84,12 @@ namespace CinnabunsFinal.Controllers
 
             if (contact == null)
                 return NotFound();
+
+            var user = Models.User.GetCurrentUser(userManager, HttpContext.User);
+            var role = user.GetRole(userManager);
+
+            if (role != "admin" && contact.PartnerId != user.Id)
+                return Forbid();
 
             context.Contacts.Remove(contact);
             context.SaveChanges();
