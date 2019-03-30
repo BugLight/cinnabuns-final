@@ -12,8 +12,8 @@
             </div>
             <div v-bind:id="role" v-else-if="role === roles.organizer">
                 <admin-header></admin-header>
-                <events></events>
-                <tasks></tasks>
+                <events v-if="activeAdminPage === 'events'"></events>
+                <tasks v-else-if="activeAdminPage === 'tasks'"></tasks>
             </div>
             <div v-bind:id="role" v-else-if="role === roles.volunteer">
                 <admin-header></admin-header>
