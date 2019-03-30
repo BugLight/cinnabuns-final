@@ -1,4 +1,4 @@
-version: "2.1"
+version: "3.4"
 
 
 services:
@@ -18,7 +18,17 @@ services:
       traefik.backend: "cinnabuns.hack"
       traefik.port: "80"
       traefik.frontend.rule: "Host:${HOST}"
-    
+  
+  dev:
+    restart: unless-stopped
+    image: kachalov/cinnabuns-final:dev-${TAG}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: publish
+    env_file: app.env
+    command: dotnet ef database update
+  
   pg:
     image: postgres:11
     environment:

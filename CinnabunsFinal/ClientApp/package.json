@@ -12,8 +12,9 @@
     "@fortawesome/vue-fontawesome": "^0.1.6",
     "bootstrap": "^4.3.1",
     "bootstrap-vue": "^2.0.0-rc.16",
-    "jsrsasign": "^8.0.12",
+    "jwt-decode": "^2.2.0",
     "vue": "^2.6.6",
+    "vue-resource": "^1.5.1",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1"
   },
