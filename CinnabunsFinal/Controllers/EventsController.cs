@@ -21,18 +21,21 @@ namespace CinnabunsFinal.Controllers
         public PageResult<Event> GetEvents([FromQuery] PageFrame pageFrame, [FromQuery] DateTime? beginDate, [FromQuery] DateTime? endDate)
         {
             var query = from e in context.Events
+                        orderby e.BeginDate descending
                         select e;
 
             if (beginDate != null)
             {
                 query = from e in query
                         where beginDate <= e.BeginDate
+                        orderby e.BeginDate descending
                         select e;
             }
             if (endDate != null)
             {
                 query = from e in query
                         where endDate >= e.BeginDate
+                        orderby e.BeginDate descending
                         select e;
             }
 
