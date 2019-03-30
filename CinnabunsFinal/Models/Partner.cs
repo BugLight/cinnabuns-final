@@ -27,5 +27,11 @@ namespace CinnabunsFinal.Models
 
         public List<TagPartner> TagPartners { get; set; }
         public List<EventPartner> EventPartners { get; set; }
+        public List<Task> Tasks { get; set; }
+
+        public bool IsViewable(User user)
+        {
+            return true;
+        }
     }
 }
