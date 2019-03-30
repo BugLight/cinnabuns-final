@@ -1,6 +1,7 @@
 ﻿using CinnabunsFinal.DTO;
 using CinnabunsFinal.Models;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Linq;
 
 namespace CinnabunsFinal.Controllers
@@ -17,11 +18,27 @@ namespace CinnabunsFinal.Controllers
 
         // Functions for getting events
         [HttpGet]
-        public PageResult<Event> GetEvents([FromQuery] PageFrame pageFrame)
+        public PageResult<Event> GetEvents([FromQuery] PageFrame pageFrame, [FromQuery] DateTime beginDate, [FromQuery] DateTime endDate)
         {
-            return new PageResult<Event>
+            var query = from e in context.Events
+                        select e;
+
+            if (beginDate != null)
             {
-                Data = new PageFrameDb<Event>().FrameDb(context.Events.AsQueryable(), pageFrame).ToList(),
+                query = from e in query
+                        where beginDate < e.BeginDate
+                        select e;
+            }
+            if (endDate != null)
+            {
+                query = from e in query
+                        where endDate > e.BeginDate
+                        select e;
+            }
+
+            return new PageResult<Event>
+            {       
+                Data = new PageFrameDb<Event>().FrameDb(query, pageFrame).ToList(),
                 TotalCount = context.Events.Count()
             };
         }
