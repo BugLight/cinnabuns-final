@@ -12,5 +12,6 @@
 
         // Id of contact
         public int ContactId { get; set; }
+        public Contact Contact;
     }
 }
