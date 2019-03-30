@@ -22,10 +22,21 @@
                     </tr>
                 </div>
                 <div v-else class="spinner--block">
-                    <b-spinner style="width: 5rem; height: 5rem;" label="Large Spinner"></b-spinner>
+                    <b-spinner style="width: 4rem; height: 4rem;" label="Large Spinner"></b-spinner>
                 </div>
             </table>
         </div>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <li class="page-item">
+                    <span class="page-link" aria-hidden="true">&laquo;</span>
+                </li>
+                <li v-for="(page, i) in countPage" :key="page.id" v-bind:class="`page-item ${activePage === i+1 ? 'active' : ''}`"><div class="page-link" @click="selectPage(i)">{{++i}}</div></li>
+                <li class="page-item">
+                    <span class="page-link" aria-hidden="true">&raquo;</span>
+                </li>
+            </ul>
+        </nav>
     </div>
 </template>
 
@@ -38,19 +49,27 @@
                 events: null,
                 limit: 50,
                 offset: 0,
-                countPage: 0
+                countPage: 10,
+                activePage: 1
             }
         },
         methods: {
-            
+            selectPage: function (i) {
+                this.activePage = i;
+                this.getEvents()
+            },
+            getEvents: function () {
+                this.$http.get(`/api/events/?limit=${this.limit}&offset=${this.offset}`).then(res => {
+                    this.events = res.body;
+                    this.offset = this.offset + this.limit;
+                    this.countPage = events.count / this.limit + ( events.count % this.limit !== 0 ) ;
+                }, e => {
+                    alert('При получении даных произошла ошибка');
+                })
+            }
         },
-        created() {
-            this.$http.get(`/api/events/?limit=${this.limit}&offset=${this.offset}`).then(res => {
-                this.events = res.body;
-                this.countPage = events.count / this.limit + ( events.count % this.limit !== 0 ) ;
-            }, e => {
-                alert('При получении даных произошла ошибка');
-            })
+        beforeMount() {
+            this.getEvents()
         },
         computed: {
             ...mapGetters(['role'])
