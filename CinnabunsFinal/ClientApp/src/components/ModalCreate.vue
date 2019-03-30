@@ -8,7 +8,7 @@
             <div class="modal-body">
                 <div class="form-group" v-for="field in action[view].fileds" :key="field.id">
                     <label :for="field.filedId">{{field.name}}</label>
-                    <input class="form-control" :type="field.type" :id="field.filedId" :placeholder="field.name"/>
+                    <input class="form-control" :type="field.type" :id="field.filedId" :placeholder="field.name" v-model="model[field.model]"/>
                 </div>
             </div>
             <div class="modal-footer">
@@ -37,25 +37,25 @@
                                 name: 'Название',
                                 type: 'text',
                                 filedId: 'field-name',
-                                model: this.name
+                                model: 'name'
                             },
                             {
                                 name: 'Дата начала',
                                 type: 'date',
                                 filedId: 'field-begin_date',
-                                model: this.beginDate
+                                model: 'beginDate'
                             },
                             {
                                 name: 'Дата окончания',
                                 type: 'date',
                                 filedId: 'field-end_date',
-                                model: this.endDate
+                                model: 'endDate'
                             },
                             {
                                 name: 'Описание',
                                 type: 'text',
                                 filedId: 'field-description',
-                                model: this.description
+                                model: 'description'
                             }
                         ]
                     },
@@ -87,10 +87,10 @@
             createObject: function() {
                 if (this.view === 'events') {
                     this.$http.post('/api/events', {
-                        name: this.name,
-                        begin_date: this.beginDate,
-                        end_date: this.endDate,
-                        description: this.description
+                        name: this.model.name,
+                        beginDate: this.model.beginDate,
+                        endDate: this.model.endDate,
+                        description: this.model.description
                     }).then(res => {
                         alert('Создание прошло успешно');
                         this.closeModal()
