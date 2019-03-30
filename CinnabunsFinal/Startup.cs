@@ -11,9 +11,11 @@ namespace CinnabunsFinal
     {
         public IConfiguration Configuration { get; }
 
-        public Startup(IConfiguration configuration)
+        public Startup()
         {
-            Configuration = configuration;
+            var builder = new ConfigurationBuilder()
+                .AddEnvironmentVariables();
+            Configuration = builder.Build();
         }
 
         public void ConfigureServices(IServiceCollection services)
