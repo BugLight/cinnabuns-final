@@ -21,9 +21,9 @@ namespace CinnabunsFinal.Models
         public string Description { get; set; }
 
         [JsonIgnore]
-        [JsonIgnore]
         public bool Deleted { get; set; } = false;
 
+        [JsonIgnore]
         public List<EventPartner> EventPartners { get; set; }
 
         [NotMapped]
