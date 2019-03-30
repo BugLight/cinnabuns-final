@@ -28,7 +28,7 @@ namespace CinnabunsFinal.Controllers
 
         // Functions for adding tasks
         [HttpPost]
-        public ActionResult<Task> AddTasks([FromBody] Task task)
+        public ActionResult<Task> AddTask([FromBody] Task task)
         {
             if (task == null)
                 return BadRequest();
@@ -40,13 +40,13 @@ namespace CinnabunsFinal.Controllers
         }
 
         // Function for editing task
-        [HttpPut]
-        public ActionResult<Task> EditMeal([FromBody] Task newTask)
+        [HttpPut("{id}")]
+        public ActionResult<Task> EditTask([FromBody] Task newTask, int id)
         {
             if (newTask == null)
                 return BadRequest();
 
-            var task = context.Tasks.Find(newTask.Id);
+            var task = context.Tasks.Find(id);
 
             if (task == null)
                 return NotFound();
@@ -64,8 +64,8 @@ namespace CinnabunsFinal.Controllers
         }
 
         // Function for deleting task
-        [HttpDelete("tasks/{id}")]
-        public ActionResult DeleteMeal(int id)
+        [HttpDelete("{id}")]
+        public ActionResult DeleteTask(int id)
         {
             var task = context.Tasks.Find(id);
 
