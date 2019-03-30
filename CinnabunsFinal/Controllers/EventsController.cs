@@ -1,6 +1,7 @@
 ﻿using CinnabunsFinal.DTO;
 using CinnabunsFinal.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 
@@ -20,7 +21,7 @@ namespace CinnabunsFinal.Controllers
         [HttpGet]
         public PageResult<Event> GetEvents([FromQuery] PageFrame pageFrame, [FromQuery] DateTime? beginDate, [FromQuery] DateTime? endDate)
         {
-            var query = from e in context.Events
+            var query = from e in context.Events.Include(e => e.EventPartners)
                         orderby e.BeginDate descending
                         select e;
 
@@ -53,16 +54,19 @@ namespace CinnabunsFinal.Controllers
             if (e == null)
                 return BadRequest();
 
+            e.Id = 0;
             context.Events.Add(e);
             context.SaveChanges();
 
-            return e;
+            return context.Events.Include(x => x.EventPartners).Where(x => x.Id == e.Id).First();
         }
 
         [HttpGet("{id}")]
         public ActionResult<Event> GetEvent(int id)
         {
-            return context.Events.Find(id) ?? (ActionResult<Event>)NotFound();
+            return context.Events.Include(e => e.EventPartners)
+                .Where(e => e.Id == id).First() ?? 
+                (ActionResult<Event>)NotFound();
         }
 
 
@@ -84,7 +88,7 @@ namespace CinnabunsFinal.Controllers
             e.Description = newE.Description;
             context.SaveChanges();
 
-            return e;
+            return context.Events.Include(x => x.EventPartners).Where(x => x.Id == e.Id).First();
         }
 
         // Function for deleting event
