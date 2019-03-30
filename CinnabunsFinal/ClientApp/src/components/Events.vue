@@ -18,7 +18,7 @@
                         <td>{{event.name}}</td>
                         <td>{{event.begin_date}}</td>
                         <td>{{event.end_date}}</td>
-                        <td><font-awesome-icon icon="pen" color="#000"/></td>
+                        <td><font-awesome-icon icon="pen" color="#000" @click="deleteEvent(event)"/> <font-awesome-icon icon="trash" color="#000"/></td>
                     </tr>
                 </div>
                 <div v-else class="spinner--block">
@@ -54,6 +54,11 @@
             }
         },
         methods: {
+            deleteEvent: function (event) {
+                this.$http.delete(`/api/events/?${event.id}`).then(res => {
+                    this.events.splice(this.events.indexOf(event), 1)
+                })
+            },
             selectPage: function (i) {
                 this.activePage = i;
                 this.getEvents()
