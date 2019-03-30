@@ -2,7 +2,7 @@
     <div class="row">
         <div class="title-row">
             <h1>События</h1>
-            <b-button variant="success">Создать новое событие</b-button>
+            <b-button variant="success" @click="isModelNewEvent = true">Создать новое событие</b-button>
         </div>
         <div class="table-responsive">
             <table class="table">
@@ -37,6 +37,9 @@
                 </li>
             </ul>
         </nav>
+        <div v-bind:class="`modal ${isModelNewEvent ? 'show' : 'fade'}`">
+            <modal-create view="events"></modal-create>
+        </div>
     </div>
 </template>
 
@@ -44,13 +47,17 @@
     import { mapGetters } from "vuex";
 
     export default {
+        components: {
+            ModalCreate: () => import('./ModalCreate.vue')
+        },
         data() {
             return {
                 events: null,
                 limit: 50,
                 offset: 0,
                 countPage: 10,
-                activePage: 1
+                activePage: 1,
+                isModelNewEvent: false
             }
         },
         methods: {
@@ -76,6 +83,11 @@
         beforeMount() {
             this.getEvents()
         },
+        mounted() {
+            this.$on('fadeModal', (is) => {
+                this.isModelNewEvent = is
+            })
+        },
         computed: {
             ...mapGetters(['role'])
         }
@@ -88,5 +100,8 @@
     }
     .spinner--block {
         margin: 40px;
+    }
+    .show {
+        display: block;
     }
 </style>
