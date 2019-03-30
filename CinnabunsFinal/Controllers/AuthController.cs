@@ -20,6 +20,8 @@ namespace CinnabunsFinal.Controllers
         private readonly UserManager<User> userManager;
         private readonly RoleManager<IdentityRole<int>> roleManager;
 
+        private const string RoleClaim = "role";
+
         public AuthController(IConfiguration configuration, UserManager<User> userManager,
                               RoleManager<IdentityRole<int>> roleManager)
         {
@@ -45,7 +47,7 @@ namespace CinnabunsFinal.Controllers
             var claims = new Claim[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new Claim(ClaimTypes.Role, roles.FirstOrDefault() ?? "")
+                new Claim(RoleClaim, roles.FirstOrDefault() ?? "")
             };
             var signingKey = configuration["SECRETKEY"];
             var token = new JwtSecurityToken(
