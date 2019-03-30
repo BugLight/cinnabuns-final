@@ -1,6 +1,7 @@
 ﻿using CinnabunsFinal.DTO;
 using CinnabunsFinal.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace CinnabunsFinal.Controllers
@@ -95,6 +96,20 @@ namespace CinnabunsFinal.Controllers
             context.SaveChanges();
 
             return Ok();
+        }
+
+        // Functions for getting the best partners
+        [HttpGet("top")]
+        public List<Partner> GetTopPartners()
+        {
+            var query = (from p in context.Partners
+                         join ep in context.EventPartners on p.Id equals ep.PartnerId
+                         join e in context.Events on ep.EventId equals e.Id
+                         group e by p into table
+                         orderby table.Count() descending
+                         select table.Key).Take(10);
+
+            return query.ToList();
         }
     }
 }
