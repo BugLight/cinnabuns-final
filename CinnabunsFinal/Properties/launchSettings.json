@@ -14,6 +14,7 @@
       "launchUrl": "http://localhost:3000",
       "environmentVariables": {
         "DBCONNECTION": "Server=localhost;Port=5432;Database=cinnabuns;Username=web_app;Password=1234",
+        "SECRETKEY": "verySecretSecretKey",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "applicationUrl": "http://localhost:5000"
