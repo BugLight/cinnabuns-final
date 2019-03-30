@@ -1,7 +1,9 @@
 ﻿using CinnabunsFinal.DTO;
 using CinnabunsFinal.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 namespace CinnabunsFinal.Controllers
@@ -20,17 +22,21 @@ namespace CinnabunsFinal.Controllers
 
         // Functions for getting contacts
         [HttpGet]
+        [Authorize(Roles="admin,organizer,volunteer")]
         public PageResult<Contact> GetContacts([FromQuery] PageFrame pageFrame)
         {
+            var q = context.Contacts.Include(c => c.ContactEmail).Include(c => c.ContactPhone);
+
             return new PageResult<Contact>
             {
-                Data = new PageFrameDb<Contact>().FrameDb(context.Contacts.AsQueryable(), pageFrame).ToList(),
-                TotalCount = context.Contacts.Count()
+                Data = new PageFrameDb<Contact>().FrameDb(q, pageFrame).ToList(),
+                TotalCount = q.Count()
             };
         }
 
         // Functions for adding contact
         [HttpPost]
+        [Authorize(Roles = "admin,organizer")]
         public ActionResult<Contact> AddContact([FromBody] Contact contact)
         {
             if (contact == null)
@@ -39,17 +45,16 @@ namespace CinnabunsFinal.Controllers
             var user = Models.User.GetCurrentUser(userManager, HttpContext.User);
             var role = user.GetRole(userManager);
 
-            if (role != "admin" && role != "organizer")
-                return Forbid();
-
             context.Contacts.Add(contact);
             context.SaveChanges();
 
-            return contact;
+            return context.Contacts.Include(c => c.ContactEmail).Include(c => c.ContactPhone)
+                .FirstOrDefault(c => c.Id == contact.Id);
         }
 
         // Function for editing contact
         [HttpPut("{id}")]
+        [Authorize(Roles = "admin,organizer")]
         public ActionResult<Contact> EditContact([FromBody] Contact newContact, int id)
         {
             if (newContact == null)
@@ -59,9 +64,6 @@ namespace CinnabunsFinal.Controllers
 
             var user = Models.User.GetCurrentUser(userManager, HttpContext.User);
             var role = user.GetRole(userManager);
-
-            if (role != "admin" && role != "organizer")
-                return Forbid();
 
             if (contact == null)
                 return NotFound();
@@ -73,11 +75,13 @@ namespace CinnabunsFinal.Controllers
             contact.ContactEmail = newContact.ContactEmail;
             context.SaveChanges();
 
-            return contact;
+            return context.Contacts.Include(c => c.ContactEmail).Include(c => c.ContactPhone)
+                .FirstOrDefault(c => c.Id == contact.Id);
         }
 
         // Function for deleting contact
         [HttpDelete("{id}")]
+        [Authorize(Roles = "admin,organizer")]
         public ActionResult DeleteContact(int id)
         {
             var contact = context.Contacts.Find(id);
@@ -87,9 +91,6 @@ namespace CinnabunsFinal.Controllers
 
             var user = Models.User.GetCurrentUser(userManager, HttpContext.User);
             var role = user.GetRole(userManager);
-
-            if (role != "admin" && role != "organizer")
-                return Forbid();
 
             context.Contacts.Remove(contact);
             context.SaveChanges();

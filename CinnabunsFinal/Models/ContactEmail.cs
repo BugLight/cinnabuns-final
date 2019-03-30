@@ -1,4 +1,6 @@
-﻿namespace CinnabunsFinal.Models
+﻿using Newtonsoft.Json;
+
+namespace CinnabunsFinal.Models
 {
     public class ContactEmail
     {
@@ -12,6 +14,7 @@
 
         // Id of contact
         public int ContactId { get; set; }
+        [JsonIgnore]
         public Contact Contact;
     }
 }
