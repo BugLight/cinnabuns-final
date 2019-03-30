@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace CinnabunsFinal.Models
@@ -16,6 +17,9 @@ namespace CinnabunsFinal.Models
         public DateTime EndDate { get; set; }
         // Description of event
         public string Description { get; set; }
+
+        [JsonIgnore]
+        public bool Deleted { get; set; } = false;
 
         public List<EventPartner> EventPartners { get; set; }
     }
