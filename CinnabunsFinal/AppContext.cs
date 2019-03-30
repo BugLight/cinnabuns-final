@@ -1,11 +1,12 @@
 ﻿using CinnabunsFinal.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace CinnabunsFinal
 {
-    public class AppContext : DbContext
+    public class AppContext : IdentityDbContext<User, IdentityRole<int>, int>
     {
-        public DbSet<User> Users { get; set; }
         public DbSet<Partner> Partners { get; set; }
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<ContactPhone> ContactPhones { get; set; }
@@ -26,6 +27,7 @@ namespace CinnabunsFinal
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<EventPartner>().HasKey(ep => new { ep.EventId, ep.PartnerId });
+            modelBuilder.Entity<TagPartner>().HasKey(tp => new { tp.TagId, tp.PartnerId });
 
             modelBuilder.Entity<EventPartner>().HasOne(ep => ep.Event)
                                                .WithMany(e => e.EventPartners)

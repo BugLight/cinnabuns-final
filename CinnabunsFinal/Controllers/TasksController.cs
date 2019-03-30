@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using CinnabunsFinal.DTO;
 using CinnabunsFinal.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CinnabunsFinal.Controllers
@@ -9,10 +10,12 @@ namespace CinnabunsFinal.Controllers
     public class TasksController : Controller
     {
         private readonly AppContext context;
+        private readonly UserManager<User> userManager;
 
-        public TasksController(AppContext context)
+        public TasksController(AppContext context, UserManager<User> userManager)
         {
             this.context = context;
+            this.userManager = userManager;
         }
 
         // Functions for getting tasks
@@ -30,6 +33,10 @@ namespace CinnabunsFinal.Controllers
         [HttpPost]
         public ActionResult<Task> AddTask([FromBody] Task task)
         {
+            var user = Models.User.GetCurrentUser(userManager, HttpContext.User);
+            if (user == null)
+                return Forbid();
+
             if (task == null)
                 return BadRequest();
 
