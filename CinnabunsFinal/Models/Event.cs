@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace CinnabunsFinal.Models
 {
@@ -15,5 +16,7 @@ namespace CinnabunsFinal.Models
         public DateTime EndDate { get; set; }
         // Description of event
         public string Description { get; set; }
+
+        public List<EventPartner> EventPartners { get; set; }
     }
 }

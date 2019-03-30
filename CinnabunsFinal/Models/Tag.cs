@@ -1,4 +1,6 @@
-﻿namespace CinnabunsFinal.Models
+﻿using System.Collections.Generic;
+
+namespace CinnabunsFinal.Models
 {
     public class Tag
     {
@@ -7,5 +9,7 @@
 
         // Name of tag
         public string Name { get; set; }
+
+        public List<TagPartner> TagPartners { get; set; }
     }
 }

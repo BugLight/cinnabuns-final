@@ -14,5 +14,8 @@
 
         // Id of partner
         public int PartnerId { get; set; }
+
+        public ContactPhone ContactPhone { get; set; }
+        public ContactEmail ContactEmail { get; set; }
     }
 }

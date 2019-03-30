@@ -1,4 +1,6 @@
-﻿namespace CinnabunsFinal.Models
+﻿using System.Collections.Generic;
+
+namespace CinnabunsFinal.Models
 {
     public class Partner
     {
@@ -22,5 +24,8 @@
         public string Email { get; set; }
         // Description of individual
         public string Description { get; set; }
+
+        public List<TagPartner> TagPartners { get; set; }
+        public List<EventPartner> EventPartners { get; set; }
     }
 }
