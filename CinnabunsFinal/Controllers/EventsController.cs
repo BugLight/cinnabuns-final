@@ -39,7 +39,7 @@ namespace CinnabunsFinal.Controllers
             return new PageResult<Event>
             {       
                 Data = new PageFrameDb<Event>().FrameDb(query, pageFrame).ToList(),
-                TotalCount = context.Events.Count()
+                TotalCount = query.Count()
             };
         }
 
