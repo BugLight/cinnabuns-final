@@ -5,23 +5,23 @@ import Home from './views/Home.vue'
 Vue.use(Router);
 
 export default new Router({
-  mode: 'history',
-  base: process.env.BASE_URL,
-  routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: Home
-    },
-    {
-      path: '/events',
-      name: 'events',
-      component: () => import('./views/Events.vue')
-    },
-    {
-      path: '/partners',
-      name: 'partners',
-      component: () => import('./views/Partners.vue')
-    },
-  ]
+    mode: 'history',
+    base: process.env.BASE_URL,
+    routes: [
+        {
+            path: '/',
+            name: 'home',
+            component: Home
+        },
+        {
+            path: '/events',
+            name: 'events',
+            component: () => import('./views/Events.vue')
+        },
+        {
+            path: '/partners',
+            name: 'partners',
+            component: () => import('./views/Partners.vue')
+        },
+    ]
 })
