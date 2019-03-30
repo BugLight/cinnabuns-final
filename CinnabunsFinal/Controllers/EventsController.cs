@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace CinnabunsFinal.Controllers
 {
-    [Route("api/evens")]
+    [Route("api/events")]
     public class EventsController : Controller
     {
         private readonly AppContext context;
@@ -18,7 +18,7 @@ namespace CinnabunsFinal.Controllers
 
         // Functions for getting events
         [HttpGet]
-        public PageResult<Event> GetEvents([FromQuery] PageFrame pageFrame, [FromQuery] DateTime beginDate, [FromQuery] DateTime endDate)
+        public PageResult<Event> GetEvents([FromQuery] PageFrame pageFrame, [FromQuery] DateTime? beginDate, [FromQuery] DateTime? endDate)
         {
             var query = from e in context.Events
                         select e;
@@ -26,13 +26,13 @@ namespace CinnabunsFinal.Controllers
             if (beginDate != null)
             {
                 query = from e in query
-                        where beginDate < e.BeginDate
+                        where beginDate <= e.BeginDate
                         select e;
             }
             if (endDate != null)
             {
                 query = from e in query
-                        where endDate > e.BeginDate
+                        where endDate >= e.BeginDate
                         select e;
             }
 

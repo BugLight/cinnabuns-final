@@ -19,6 +19,18 @@ namespace CinnabunsFinal.Controllers
         [HttpGet]
         public PageResult<Partner> GetPartners([FromQuery] PageFrame pageFrame, [FromQuery] string[] tags)
         {
+            if (tags.Length == 0)
+            {
+                var q = from p in context.Partners
+                        select p;
+
+                return new PageResult<Partner>
+                {
+                    Data = new PageFrameDb<Partner>().FrameDb(q, pageFrame).ToList(),
+                    TotalCount = context.Partners.Count()
+                };
+            }
+
             var query = from p in context.Partners
                         join tp in context.TagPartners on p.Id equals tp.PartnerId
                         join t in context.Tags on tp.TagId equals t.Id

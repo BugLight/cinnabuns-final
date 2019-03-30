@@ -58,7 +58,6 @@ namespace CinnabunsFinal.Controllers
             user.Surname = newUser.Surname;
             user.Patronymic = newUser.Patronymic;
             user.Phone = newUser.Phone;
-            user.Login = newUser.Login;
             context.SaveChanges();
 
             return user;
