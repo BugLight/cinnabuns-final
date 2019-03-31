@@ -71,6 +71,17 @@ namespace CinnabunsFinal.Controllers
             };
         }
 
+        private static readonly Random random = new Random();
+        private string GeneratePassword()
+        {
+            var builder = new StringBuilder();
+            for (int i = 0; i < 10; i++)
+            {
+                builder.Append(random.Next(0, 10));
+            }
+            return builder.ToString();
+        }
+
         [HttpPost("register")]
         //[Authorize(Roles="admin")]
         public JsonResult Register([FromBody]UserResponse user, [FromQuery]string role, [FromQuery]string to)
@@ -94,7 +105,9 @@ namespace CinnabunsFinal.Controllers
                     SecurityAlgorithms.HmacSha256));
             var token = new JwtSecurityTokenHandler().WriteToken(tokenData);
 
-            var url = string.Format("http://best-hack.prod.kistriver.net/api/auth/signup/{0}", token);
+            var pass = GeneratePassword();
+            var url = string.Format("http://best-hack.prod.kistriver.net/api/auth/signup/{0}?password={1}", 
+                token, pass);
 
             MailMessage mail = new MailMessage(configuration["MAILFROM"], to);
             SmtpClient client = new SmtpClient();
@@ -107,7 +120,8 @@ namespace CinnabunsFinal.Controllers
             client.Credentials = new System.Net.NetworkCredential(configuration["MAILFROM"], configuration["MAILPASS"]);
             mail.BodyEncoding = UTF8Encoding.UTF8;
             mail.Subject = "Регистрация";
-            mail.Body = string.Format("Ссылка для регистрации: <a href='{0}'>{0}</a>", url);
+            mail.Body = string.Format("Ссылка для регистрации: <a href='{0}'>{0}</a>. ", url);
+            mail.Body = string.Format("Ссылка для регистрации: <a href='{0}'>{0}</a>. Пароль: {1}", url, pass);
             mail.IsBodyHtml = true;
             client.Send(mail);
 
@@ -117,16 +131,18 @@ namespace CinnabunsFinal.Controllers
         }
 
         [HttpGet("signup/{token}")]
-        public UserResponse SignUp(string token)
+        public UserResponse SignUp(string token, [FromQuery][FromBody] string password)
         {
+            if (password == null)
+                return BadRequest();
+
             var jwt = new JwtSecurityTokenHandler().ReadToken(token) as JwtSecurityToken;
             var claims = jwt.Claims;
             var role = claims.First(c => c.Type == "role").Value;
             var userData = claims.First(c => c.Type == "user").Value;
 
             var user = JsonConvert.DeserializeObject<User>(userData);
-            context.Add(user);
-            context.SaveChanges();
+            AsyncHelper.RunSync(() => userManager.CreateAsync(user, password));
 
             return Mapper.Map<UserResponse>(user);
         }
