@@ -15,15 +15,15 @@ namespace CinnabunsFinal.Models
         public DateTime EndDate { get; set; }
         // Description of task
         public string Description { get; set; }
-
         // If task is complited - True, other - False
         public bool Completed { get; set; } = false;
-
         // Id of responsible user
+        [JsonIgnore]
         public int ResponsibleId { get; set; }
         [ForeignKey("ResponsibleId")]
         public User Responsible { get; set; }
         // Id of assigner user
+        [JsonIgnore]
         public int AssignerId { get; set; }
         [ForeignKey("AssignerId")]
         public User Assigner { get; set; }

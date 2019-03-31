@@ -17,7 +17,36 @@
             <b-col md="8">
                 <b-card v-if="currentTask">
                     <b-card-title>{{currentTask.name}}</b-card-title>
-                    <b-card-text>{{currentTask.description}}</b-card-text>
+                    <b-card-text>
+                        <div>
+                            <b>Организатор: </b>
+                            {{currentTask.assigner.userName}}
+                        </div>
+                        <div>
+                            <b>Ответственный: </b>
+                            {{currentTask.responsible.userName}}
+                        </div>
+                        <div>
+                            <b>Выполнить до: </b>
+                            {{currentTask.endDate}}
+                        </div>
+                        <div>
+                            <b>Связанное событие: </b>
+                            {{currentTask.event.name}}
+                        </div>
+                        <div>
+                            <b>Партнер: </b>
+                            <span>{{currentTask.partner.name}} </span>
+                            <span v-if="currentTask.partner.surname">
+                                {{currentTask.partner.surname}} {{currentTask.partner.patronymic}}
+                            </span>
+                        </div>
+                        <p class="task-description">
+                            {{currentTask.description}}
+                        </p>
+                    </b-card-text>
+
+                    <b-button variant="success">Завершить</b-button>
                 </b-card>
             </b-col>
         </b-row>
@@ -48,6 +77,17 @@
             },
             setCurrentTask(task) {
                 this.currentTask = task;
+                this.$http.get(`/api/partners/${task.partnerId}`)
+                    .then(res => res.json())
+                    .then(partner => {
+                        this.currentTask.partner = partner;
+                        return this.$http.get(`/api/events/${task.eventId}`);
+                    })
+                    .then(res => res.json())
+                    .then(event => {
+                        this.currentTask.event = event;
+                    })
+                    .catch(e => alert('При получении даных произошла ошибка'));
             }
         },
         beforeMount() {
@@ -57,5 +97,7 @@
 </script>
 
 <style scoped>
-
+    .task-description {
+        margin-top: 15px;
+    }
 </style>

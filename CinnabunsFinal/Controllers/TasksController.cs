@@ -37,7 +37,10 @@ namespace CinnabunsFinal.Controllers
         [HttpGet]
         public PageResult<Task> GetTasks([FromQuery] PageFrame pageFrame, int? assignerId)
         {
-            var q = context.Tasks.AsQueryable();
+            var q = context.Tasks
+                .Include(t => t.Assigner)
+                .Include(t => t.Responsible)
+                .AsQueryable();
 
             if (assignerId != null)
             {
