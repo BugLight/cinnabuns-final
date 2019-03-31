@@ -134,7 +134,7 @@ namespace CinnabunsFinal.Controllers
         public UserResponse SignUp(string token, [FromQuery][FromBody] string password)
         {
             if (password == null)
-                return BadRequest();
+                return null;
 
             var jwt = new JwtSecurityTokenHandler().ReadToken(token) as JwtSecurityToken;
             var claims = jwt.Claims;
@@ -143,6 +143,8 @@ namespace CinnabunsFinal.Controllers
 
             var user = JsonConvert.DeserializeObject<User>(userData);
             AsyncHelper.RunSync(() => userManager.CreateAsync(user, password));
+            context.Add(user);
+            context.SaveChanges();
 
             return Mapper.Map<UserResponse>(user);
         }
