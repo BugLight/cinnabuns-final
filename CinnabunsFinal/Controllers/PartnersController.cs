@@ -1,6 +1,8 @@
 ﻿using CinnabunsFinal.DTO;
 using CinnabunsFinal.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -22,7 +24,7 @@ namespace CinnabunsFinal.Controllers
         {
             if (tags.Length == 0)
             {
-                var q = from p in context.Partners
+                var q = from p in context.Partners.Include(p => p.EventPartners).Include(p => p.TagPartners)
                         select p;
 
                 return new PageResult<Partner>
@@ -32,7 +34,7 @@ namespace CinnabunsFinal.Controllers
                 };
             }
 
-            var query = from p in context.Partners
+            var query = from p in context.Partners.Include(p => p.EventPartners).Include(p => p.TagPartners)
                         join tp in context.TagPartners on p.Id equals tp.PartnerId
                         join t in context.Tags on tp.TagId equals t.Id
                         where tags.Contains(t.Name)
@@ -46,13 +48,15 @@ namespace CinnabunsFinal.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Partner> GetPartners(int id)
+        public ActionResult<Partner> GetPartner(int id)
         {
-            return context.Partners.Find(id) ?? (ActionResult<Partner>)NotFound();
+            return context.Partners.Include(p => p.EventPartners).Include(p => p.TagPartners)
+                .FirstOrDefault(p => p.Id == id) ?? (ActionResult<Partner>)NotFound();
         }
 
         // Functions for adding partner
         [HttpPost]
+        [Authorize(Roles="admin")]
         public ActionResult<Partner> AddPartner([FromBody] Partner partner)
         {
             if (partner == null)
@@ -61,11 +65,13 @@ namespace CinnabunsFinal.Controllers
             context.Partners.Add(partner);
             context.SaveChanges();
 
-            return partner;
+            return context.Partners.Include(p => p.EventPartners).Include(p => p.TagPartners)
+                .FirstOrDefault(p => p.Id == partner.Id);
         }
 
         // Function for editing partner
         [HttpPut("{id}")]
+        [Authorize(Roles="admin")]
         public ActionResult<Partner> EditPartner([FromBody] Partner newPartner, int id)
         {
             if (newPartner == null)
@@ -86,14 +92,17 @@ namespace CinnabunsFinal.Controllers
             partner.Description = newPartner.Description;
             context.SaveChanges();
 
-            return partner;
+            return context.Partners.Include(p => p.EventPartners).Include(p => p.TagPartners)
+                .FirstOrDefault(p => p.Id == partner.Id);
         }
 
         // Function for deleting partner
         [HttpDelete("{id}")]
+        [Authorize(Roles="admin")]
         public ActionResult DeletePartner(int id)
         {
-            var partner = context.Partners.Find(id);
+            var partner = context.Partners.Include(p => p.EventPartners).Include(p => p.TagPartners)
+                .FirstOrDefault(p => p.Id == id);
 
             if (partner == null)
                 return NotFound();
@@ -113,7 +122,7 @@ namespace CinnabunsFinal.Controllers
                        group p by p.Id into table
                        select new { table.Key, Count = table.Count() };
 
-            var query = (from p in context.Partners
+            var query = (from p in context.Partners.Include(p => p.EventPartners).Include(p => p.TagPartners)
                          join k in keys on p.Id equals k.Key
                          orderby k.Count descending
                          select p).Take(10);
