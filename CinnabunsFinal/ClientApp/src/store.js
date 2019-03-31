@@ -21,10 +21,6 @@ export default new Vuex.Store({
                 title: 'Партнеры'
             },
             {
-                name: 'tags',
-                title: 'Теги'
-            },
-            {
                 name: 'users',
                 title: 'Пользователи'
             }],
