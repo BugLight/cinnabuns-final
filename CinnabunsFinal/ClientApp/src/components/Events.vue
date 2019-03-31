@@ -21,7 +21,7 @@
                         <td>{{event.name}}</td>
                         <td>{{event.beginDate}}</td>
                         <td>{{event.endDate}}</td>
-                        <td><font-awesome-icon icon="pen" color="#000" @click="deleteEvent(event)" style="margin-right: 50px"/><font-awesome-icon icon="trash" color="#000"/></td>
+                        <td><font-awesome-icon @click="updateEvent(event)" icon="pen" color="#000"style="margin-right: 50px"/><font-awesome-icon icon="trash" @click="deleteEvent(event)" color="#000"/></td>
                     </tr>
                 </tbody>
                 <div v-else class="spinner--block">
@@ -43,6 +43,9 @@
         <div v-bind:class="`modal ${isModelNewEvent ? 'show' : 'fade'}`">
             <modal-create view="events"></modal-create>
         </div>
+        <div v-bind:class="`modal ${isModalUpEvent ? 'show' : 'fade'}`">
+            <modal-update view="events" :pattern="updateE"></modal-update>
+        </div>
     </div>
 </template>
 
@@ -51,7 +54,8 @@
 
     export default {
         components: {
-            ModalCreate: () => import('./ModalCreate.vue')
+            ModalCreate: () => import('./ModalCreate.vue'),
+            ModalUpdate: () => import('./ModalUpdate.vue')
         },
         data() {
             return {
@@ -60,13 +64,19 @@
                 offset: 0,
                 countPage: 0,
                 activePage: 1,
-                isModelNewEvent: false
+                isModelNewEvent: false,
+                isModalUpEvent: false,
+                updateE: null
             }
         },
         methods: {
+            updateEvent: function (event) {
+                this.updateE = event;
+                this.isModalUpEvent = true;
+            },
             deleteEvent: function (event) {
-                this.$http.delete(`/api/events/?${event.id}`).then(res => {
-                    this.events.splice(this.events.indexOf(event), 1)
+                this.$http.delete(`/api/events/${event.id}`).then(res => {
+                    this.events.data.splice(this.events.data.indexOf(event), 1)
                 })
             },
             incPage: function() {
@@ -97,7 +107,9 @@
         },
         mounted() {
             this.$on('fadeModal', (is) => {
-                this.isModelNewEvent = is
+                this.isModelNewEvent = is;
+                this.isModalUpEvent = is;
+                this.getEvents()
             })
         },
         computed: {
