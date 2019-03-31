@@ -36,6 +36,9 @@
                     beginDate: '',
                     endDate: '',
                     description: '',
+                    responsibleId: '',
+                    eventId: '',
+                    partnerId: ''
                     inn: '',
                     site: '',
                     surname: '',
@@ -74,7 +77,45 @@
                         ]
                     },
                     'tasks': {
-                        title: 'Создание новой задачи'
+                        title: 'Создание новой задачи',
+                        fields: [
+                            {
+                                name: 'Название',
+                                type: 'text',
+                                filedId: 'field-name',
+                                model: 'name'
+                            },
+                            {
+                                name: 'Выполнить до',
+                                type: 'date',
+                                filedId: 'field-end_date',
+                                model: 'endDate'
+                            },
+                            {
+                                name: 'Ответственный Id',
+                                type: 'text',
+                                filedId: 'field-responsible_id',
+                                model: 'responsibleId'
+                            },
+                            {
+                                name: 'Событие Id',
+                                type: 'text',
+                                filedId: 'field-event_id',
+                                model: 'eventId'
+                            },
+                            {
+                                name: 'Партнер Id',
+                                type: 'text',
+                                filedId: 'field-partner_id',
+                                model: 'partnerId'
+                            },
+                            {
+                                name: 'Описание',
+                                type: 'text',
+                                filedId: 'field-description',
+                                model: 'description'
+                            }
+                        ]
                     },
                     'partners': {
                         title: 'Создание нового партнера',
@@ -174,6 +215,20 @@
                     }, e => {
                         alert('Во время создания произошла ошибка')
                     })
+                } else if (this.view === 'tasks') {
+                    this.$http.post('/api/tasks', {
+                        name: this.model.name,
+                        endDate: this.model.endDate,
+                        responsibleId: this.model.responsibleId,
+                        eventId: this.model.eventId,
+                        partnerId: this.model.partnerId,
+                        description: this.model.description
+                    }).then(res => {
+                        alert('Задача создана');
+                        this.closeModal();
+                    }, e => {
+                        alert('Во время создания произошла ошибка');
+                    });
                 } else if (this.view === 'partners') {
                     this.$http.post('http://172.20.0.3/api/partners', {
                         name: this.model.name,
@@ -189,7 +244,7 @@
                         this.closeModal()
                     }, e => {
                         alert('Во время создания произошла ошибка')
-                    })
+                    });
                 }
             }
         }
