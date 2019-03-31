@@ -92,7 +92,7 @@
             },
             updateObject: function() {
                 if (this.view === 'events') {
-                    this.$http.put(`/api/events/${this.copyPattern.id}`, {
+                    this.$http.put(`http://172.20.0.3/api/events/${this.copyPattern.id}`, {
                         name: this.copyPattern.name,
                         beginDate: this.copyPattern.beginDate,
                         endDate: this.copyPattern.endDate,

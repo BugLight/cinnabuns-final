@@ -75,7 +75,7 @@
                 this.isModalUpEvent = true;
             },
             deleteEvent: function (event) {
-                this.$http.delete(`/api/events/${event.id}`).then(res => {
+                this.$http.delete(`http://172.20.0.3/api/events/${event.id}`).then(res => {
                     this.events.data.splice(this.events.data.indexOf(event), 1)
                 })
             },
@@ -94,7 +94,7 @@
                 }
             },
             getEvents: function () {
-                this.$http.get(`/api/events/?limit=${this.limit}&offset=${this.offset}`).then(res => {
+                this.$http.get(`http://172.20.0.3/api/events/?limit=${this.limit}&offset=${this.offset}`).then(res => {
                     this.events = res.body;
                     this.countPage = Math.floor(this.events['totalCount'] / this.limit + ( this.events['totalCount'] % this.limit !== 0 ? 1 : 0));
                 }, e => {

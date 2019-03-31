@@ -6,7 +6,7 @@
                 <button type="button" class="close" @click="closeModal">×</button>
             </div>
             <div class="modal-body">
-                <div class="form-group" v-for="field in action[view].fileds" :key="field.id">
+                <div class="form-group" v-for="field in action[view].fields" :key="field.id">
                     <label :for="field.filedId">{{field.name}}</label>
                     <input class="form-control" :type="field.type" :id="field.filedId" :placeholder="field.name" v-model="model[field.model]"/>
                 </div>
@@ -28,11 +28,17 @@
                     beginDate: '',
                     endDate: '',
                     description: '',
+                    inn: '',
+                    site: '',
+                    surname: '',
+                    mail: '',
+                    patronymic: '',
+                    phone: ''
                 },
                 action: {
                     'events': {
                         title: 'Создание нового события',
-                        fileds: [
+                        fields: [
                             {
                                 name: 'Название',
                                 type: 'text',
@@ -63,7 +69,51 @@
                         title: 'Создание новой задачи'
                     },
                     'partners': {
-                        title: 'Создание нового партнера'
+                        title: 'Создание нового партнера',
+                        fields: [
+                            {
+                                name: 'Название',
+                                type: 'text',
+                                filedId: 'field-name',
+                                model: 'name'
+                            },
+                            {
+                                name: 'ИНН',
+                                type: 'number',
+                                filedId: 'field-inn',
+                                model: 'inn'
+                            },
+                            {
+                                name: 'Web-site',
+                                type: 'text',
+                                filedId: 'field-site',
+                                model: 'site'
+                            },
+                            {
+                                name: 'Фамилия',
+                                type: 'text',
+                                filedId: 'field-surname',
+                                model: 'surname'
+                            },
+                            {
+                                name: 'Отчество',
+                                type: 'text',
+                                filedId: 'field-patronymic',
+                                model: 'patronymic'
+                            },
+                            {
+                                name: 'Телефон',
+                                type: 'text',
+                                filedId: 'field-phone',
+                                model: 'phone'
+                            },
+                            {
+                                name: 'Email',
+                                type: 'mail',
+                                filedId: 'field-mail',
+                                model: 'mail'
+                            },
+                        ]
                     },
                     'tags': {
                         title: 'Создание нового теги'
@@ -86,7 +136,7 @@
             },
             createObject: function() {
                 if (this.view === 'events') {
-                    this.$http.post('/api/events', {
+                    this.$http.post('http://172.20.0.3/api/events', {
                         name: this.model.name,
                         beginDate: this.model.beginDate,
                         endDate: this.model.endDate,
