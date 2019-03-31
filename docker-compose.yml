@@ -3,7 +3,6 @@ version: "3.4"
 
 services:
   app:
-    restart: unless-stopped
     image: kachalov/cinnabuns-final:${TAG}
     build:
       context: .
@@ -20,7 +19,6 @@ services:
       traefik.frontend.rule: "Host:${HOST}"
   
   dev:
-    restart: unless-stopped
     image: kachalov/cinnabuns-final:dev-${TAG}
     build:
       context: .
