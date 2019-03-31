@@ -35,7 +35,7 @@ namespace CinnabunsFinal.Controllers
 
         // Functions for getting tasks
         [HttpGet]
-        public PageResult<Task> GetTasks([FromQuery] PageFrame pageFrame, int? assignerId)
+        public PageResult<Task> GetTasks([FromQuery] PageFrame pageFrame, int? assignerId, int? responsibleId)
         {
             var q = context.Tasks
                 .Include(t => t.Assigner)
@@ -45,6 +45,10 @@ namespace CinnabunsFinal.Controllers
             if (assignerId != null)
             {
                 q = q.Where(t => t.AssignerId == assignerId);
+            }
+            if (responsibleId != null)
+            {
+                q = q.Where(t => t.ResponsibleId == responsibleId);
             }
 
             return new PageResult<Task>

@@ -74,6 +74,9 @@ export default new Vuex.Store({
         role (state) {
             return jwt_decode('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJyb2xlIjoiYWRtaW4ifQ.RAsF_THrV3ujtaBIaauKlTltnPYjowkp6jQ-dCls1GI').role;
         },
+        uid (state) {
+            return jwt_decode('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJyb2xlIjoiYWRtaW4ifQ.RAsF_THrV3ujtaBIaauKlTltnPYjowkp6jQ-dCls1GI').sub;
+        },
         roles (state) {
             return state.roles;
         },
