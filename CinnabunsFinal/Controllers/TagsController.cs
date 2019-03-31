@@ -32,6 +32,7 @@ namespace CinnabunsFinal.Controllers
 
         // Functions for adding tag
         [HttpPost]
+        [Authorize(Roles="admin,organizer")]
         public ActionResult<Tag> AddTag([FromBody] Tag tag)
         {
             if (tag == null)
@@ -43,26 +44,9 @@ namespace CinnabunsFinal.Controllers
             return context.Tags.Include(c => c.TagPartners).FirstOrDefault(c => c.Id == tag.Id);
         }
 
-        // Function for editing tag
-        [HttpPut("{id}")]
-        public ActionResult<Tag> EditTag([FromBody] Tag newTag, int id)
-        {
-            if (newTag == null)
-                return BadRequest();
-
-            var tag = context.Tags.Find(id);
-
-            if (tag == null)
-                return NotFound();
-
-            tag.Name = newTag.Name;
-            context.SaveChanges();
-
-            return context.Tags.Include(c => c.TagPartners).FirstOrDefault(c => c.Id == tag.Id);
-        }
-
         // Function for deleting tag
         [HttpDelete("{id}")]
+        [Authorize(Roles="admin,organizer")]
         public ActionResult DeleteTag(int id)
         {
             var tag = context.Tags.Find(id);

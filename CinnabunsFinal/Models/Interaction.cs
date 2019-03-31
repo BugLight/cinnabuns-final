@@ -16,9 +16,11 @@ namespace CinnabunsFinal.Models
         public string Description { get; set; }
 
         // Id of responsible user
-        [ForeignKey("User")]
         public int ResponsibleId { get; set; }
+        public User Responsible { get; set; }
+
         // Id of contact
         public int ContactId { get; set; }
+        public Contact Contact { get; set; }
     }
 }
