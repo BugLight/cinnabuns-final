@@ -1,6 +1,5 @@
 <template>
     <div class="container-fluid">
-        <Header></Header>
         <div class="row">
             <div class="col-12 col-sm-12">
                 <div class="title-icon"></div>
