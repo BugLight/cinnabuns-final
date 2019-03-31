@@ -35,12 +35,19 @@ namespace CinnabunsFinal.Controllers
 
         // Functions for getting tasks
         [HttpGet]
-        public PageResult<Task> GetTasks([FromQuery] PageFrame pageFrame)
+        public PageResult<Task> GetTasks([FromQuery] PageFrame pageFrame, int? assignerId)
         {
+            var q = context.Tasks.AsQueryable();
+
+            if (assignerId != null)
+            {
+                q = q.Where(t => t.AssignerId == assignerId);
+            }
+
             return new PageResult<Task>
             {
-                Data = new PageFrameDb<Task>().FrameDb(context.Tasks.AsQueryable(), pageFrame).ToList(),
-                TotalCount = context.Tasks.Count()
+                Data = new PageFrameDb<Task>().FrameDb(q, pageFrame).ToList(),
+                TotalCount = q.Count()
             };
         }
 
