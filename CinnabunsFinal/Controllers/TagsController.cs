@@ -2,6 +2,7 @@
 using CinnabunsFinal.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
@@ -74,5 +75,25 @@ namespace CinnabunsFinal.Controllers
 
             return Ok();
         }
+
+        // Function for searching tag
+        [HttpGet("search")]    
+        public List<Tag> SearchTag([FromQuery] string q)
+        {
+            var query = from t in context.Tags
+                        orderby t.Name
+                        select t;
+
+            if (!string.IsNullOrEmpty(q))
+            {
+                query = from t in query
+                        where t.Name.IndexOf(q) > -1
+                        orderby t.Name
+                        select t;
+            }
+
+            return query.Take(10).ToList();
+        }
+
     }
 }
