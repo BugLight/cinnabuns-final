@@ -14,6 +14,23 @@
                             <span class="form-control" style="font-size: 13px;" v-for="help in model.helpMe">{{}}</span>
                         </div>
                     </div>
+                    <b-form-select v-else-if="field.type === 'select'" v-model="model.role">
+                        <template slot="first">
+                            <option :value="null" disabled>Выберите роль</option>
+                        </template>
+                        <option value="admin">Администратор</option>
+                        <option value="organizer">Организатор</option>
+                        <option value="volunteer">Волонтер</option>
+                    </b-form-select>
+                    <b-form-select v-else-if="field.type === 'select2'" v-model="model.type">
+                        <template slot="first">
+                            <option :value="null" disabled>Тип взаимодействия</option>
+                        </template>
+                        <option value="0">Телефонный звокнок</option>
+                        <option value="1">Email</option>
+                        <option value="2">Личная встреча</option>
+                        <option value="3">Другое</option>
+                    </b-form-select>
                     <input class="form-control" v-else :type="field.type" :id="field.filedId" :placeholder="field.name" v-model="model[field.model]"/>
                 </div>
             </div>
@@ -37,14 +54,18 @@
                     endDate: '',
                     description: '',
                     responsibleId: '',
+                    contactId: '',
                     eventId: '',
-                    partnerId: ''
+                    partnerId: '',
                     inn: '',
                     site: '',
                     surname: '',
                     email: '',
                     patronymic: '',
-                    phone: ''
+                    phone: '',
+                    role: '',
+                    date: '',
+                    type: ''
                 },
                 action: {
                     'events': {
@@ -171,8 +192,81 @@
                         ]
                     },
                     'users': {
-                        title: 'Создание нового пользователя'
+                        title: 'Создание нового пользователя',
+                        fields: [
+                            {
+                                name: 'Имя',
+                                type: 'text',
+                                filedId: 'field-name',
+                                model: 'name'
+                            },
+                            {
+                                name: 'Фамилия',
+                                type: 'text',
+                                filedId: 'field-surname',
+                                model: 'surname'
+                            },
+                            {
+                                name: 'Отчество',
+                                type: 'text',
+                                filedId: 'field-patronymic',
+                                model: 'patronymic'
+                            },
+                            {
+                                name: 'Телефон',
+                                type: 'text',
+                                filedId: 'field-phone',
+                                model: 'phone'
+                            },
+                            {
+                                name: 'Email',
+                                type: 'text',
+                                filedId: 'field-email',
+                                model: 'email'
+                            },
+                            {
+                                name: 'Роль',
+                                type: 'select',
+                                filedId: 'field-role',
+                                model: 'role'
+                            },
+                        ]
                     },
+                    'interactions': {
+                        title: 'Создание нового взаимодействия',
+                        fields: [
+                            {
+                                name: 'Дата',
+                                type: 'date',
+                                fieldId: 'filed-date',
+                                model: 'date'
+                            },
+                            {
+                                name: 'Тип',
+                                type: 'select2',
+                                fieldId: 'filed-select',
+                                model: 'type'
+                            },
+                            {
+                                name: 'Описание',
+                                type: 'test',
+                                fieldId: 'filed-description',
+                                model: 'description'
+                            },
+                            {
+                                name: 'Ответственный Id',
+                                type: 'text',
+                                fieldId: 'filed-res-id',
+                                model: 'responsibleId'
+                            },
+                            {
+                                name: 'Id контакта взаимодействия',
+                                type: 'text',
+                                fieldId: 'filed-con-id',
+                                model: 'contactId'
+                            }
+                        ]
+                    }
                 }
             }
         },
@@ -192,7 +286,7 @@
                 }
             },
             helpTags: function() {
-                this.$http.get(`http://172.20.0.3/api/tags/search?q=${this.model.helpT}`).then(res => {
+                this.$http.get(`/api/tags/search?q=${this.model.helpT}`).then(res => {
                     this.model.helpMe = res.body;
                     if (this.model.helpMe.length > 0) {
                         document.getElementById('help-array').style.display = 'block'
@@ -204,7 +298,7 @@
             },
             createObject: function() {
                 if (this.view === 'events') {
-                    this.$http.post('http://172.20.0.3/api/events', {
+                    this.$http.post('/api/events', {
                         name: this.model.name,
                         beginDate: this.model.beginDate,
                         endDate: this.model.endDate,
@@ -230,7 +324,7 @@
                         alert('Во время создания произошла ошибка');
                     });
                 } else if (this.view === 'partners') {
-                    this.$http.post('http://172.20.0.3/api/partners', {
+                    this.$http.post('/api/partners', {
                         name: this.model.name,
                         inn: this.model.inn,
                         site: this.model.site,
@@ -244,10 +338,36 @@
                         this.closeModal()
                     }, e => {
                         alert('Во время создания произошла ошибка')
-                    });
+                    })
+                } else if (this.view === 'users') {
+                    this.$http.post(`/api/auth/register?role=${this.model.role}`, {
+                        name: this.model.name,
+                        surname: this.model.surname,
+                        patronymic: this.model.patronymic,
+                        phone: this.model.phone,
+                        email: this.model.email,
+                    }).then(res => {
+                        alert('Создание прошло успешно');
+                        this.closeModal()
+                    }, e => {
+                        alert('Во время создания произошла ошибка')
+                    })
+                } else if (this.view === 'interactions') {
+                    this.$http.post(`/api/interactions`, {
+                        date: this.model.date,
+                        type: this.model.type,
+                        description: this.model.description,
+                        responsibleId: this.model.responsibleId,
+                        contactId: this.model.contactId,
+                    }).then(res => {
+                        alert('Создание прошло успешно');
+                        this.closeModal()
+                    }, e => {
+                        alert('Во время создания произошла ошибка')
+                    })
                 }
             }
-        }
+        },
     }
 </script>
 <style lang="scss">

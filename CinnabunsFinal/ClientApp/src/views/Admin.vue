@@ -1,12 +1,13 @@
 <template>
     <div class="main">
-        <div class="container-fluid" v-if="!isAuthenticated">
+        <div class="container-fluid" v-if="isAuthenticated">
             <div v-bind:id="role" v-if="role === roles.admin">
                 <admin-header></admin-header>
                 <events v-if="activeAdminPage === 'events'"></events>
                 <partners v-else-if="activeAdminPage === 'partners'"></partners>
                 <tasks v-else-if="activeAdminPage === 'tasks'"></tasks>
                 <users v-else-if="activeAdminPage === 'users'"></users>
+                <interactions v-else-if="activeAdminPage === 'interactions'"></interactions>
                 <events v-else></events>
             </div>
             <div v-bind:id="role" v-else-if="role === roles.organizer">
@@ -16,8 +17,8 @@
             </div>
             <div v-bind:id="role" v-else-if="role === roles.volunteer">
                 <admin-header></admin-header>
-                <tasks></tasks>
-                <partners></partners>
+                <tasks v-if="activeAdminPage === 'tasks'"></tasks>
+                <partners v-else-if="activeAdminPage === 'partners'"></partners>
             </div>
         </div>
         <div class="container-fluid row justify-content-center align-items-center auth" v-else>
@@ -56,6 +57,7 @@
             Partners: () => import('../components/Partners.vue'),
             Tasks: () => import('../components/Tasks.vue'),
             Users: () => import('../components/Users.vue'),
+            Interactions: () => import('../components/Interactions.vue'),
             AdminHeader: () => import('../components/AdminHeader.vue')
         },
         methods:{

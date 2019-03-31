@@ -119,11 +119,11 @@
             },
             setCurrentTask(task) {
                 this.currentTask = task;
-                this.$http.get(`http://172.20.0.3/api/partners/${task.partnerId}`)
+                this.$http.get(`/api/partners/${task.partnerId}`)
                     .then(res => res.json())
                     .then(partner => {
                         this.currentTask.partner = partner;
-                        return this.$http.get(`http://172.20.0.3/api/events/${task.eventId}`);
+                        return this.$http.get(`/api/events/${task.eventId}`);
                     })
                     .then(res => res.json())
                     .then(event => {

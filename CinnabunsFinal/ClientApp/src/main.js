@@ -25,6 +25,11 @@ Vue.use(Resource);
 
 Vue.config.productionTip = false;
 
+Vue.http.interceptors.push((request, next) => {
+    request.headers.set('Authorization', 'Bearer ' + store.getters.jwtToken);
+    next();
+});
+
 new Vue({
     router,
     store,
