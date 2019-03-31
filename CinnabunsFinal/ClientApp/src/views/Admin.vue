@@ -5,7 +5,6 @@
                 <admin-header></admin-header>
                 <events v-if="activeAdminPage === 'events'"></events>
                 <partners v-else-if="activeAdminPage === 'partners'"></partners>
-                <tags v-else-if="activeAdminPage === 'tags'"></tags>
                 <tasks v-else-if="activeAdminPage === 'tasks'"></tasks>
                 <users v-else-if="activeAdminPage === 'users'"></users>
                 <events v-else></events>
@@ -55,7 +54,6 @@
         components: {
             Events: () => import('../components/Events.vue'),
             Partners: () => import('../components/Partners.vue'),
-            Tags: () => import('../components/Tags.vue'),
             Tasks: () => import('../components/Tasks.vue'),
             Users: () => import('../components/Users.vue'),
             AdminHeader: () => import('../components/AdminHeader.vue')
