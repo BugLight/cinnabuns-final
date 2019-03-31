@@ -6,22 +6,32 @@
         </div>
         <div class="table-responsive">
             <table class="table">
-                <tr>
-                    <th>#</th>
-                    <th>Название / Имя</th>
-                    <th>ИНН</th>
-                    <th>Web-site</th>
-                    <th>Фамилия</th>
-                    <th>Отчество</th>
-                    <th>Телефон</th>
-                    <th>Email</th>
-                </tr>
-                <div v-if="partners">
-                    <tr v-for="partner in partners.data" :key="partner.id">
-                        <td>{{partner.name}}</td>
-                        <td><font-awesome-icon icon="pen" color="#000"/> <font-awesome-icon icon="trash" color="#000" @click="deletePartner(partner)"/></td>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Название / Имя</th>
+                        <th>ИНН</th>
+                        <th>Web-site</th>
+                        <th>Фамилия</th>
+                        <th>Отчество</th>
+                        <th>Телефон</th>
+                        <th>Email</th>
+                        <th>Редоктирование</th>
                     </tr>
-                </div>
+                </thead>
+                <tbody v-if="partners">
+                    <tr v-for="partner in partners.data" :key="partner.id">
+                        <td>{{partner.id}}</td>
+                        <td>{{partner.name}}</td>
+                        <td>{{partner.inn}}</td>
+                        <td>{{partner.site}}</td>
+                        <td>{{partner.surname}}</td>
+                        <td>{{partner.patronymic}}</td>
+                        <td>{{partner.phone}}</td>
+                        <td>{{partner.email}}</td>
+                        <td><font-awesome-icon @click="updateParnter(partner)" icon="pen" color="#000"style="margin-right: 50px"/> <font-awesome-icon icon="trash" color="#000" @click="deletePartner(partner)"/></td>
+                    </tr>
+                </tbody>
                 <div v-else class="spinner--block">
                     <b-spinner style="width: 4rem; height: 4rem;" label="Large Spinner"></b-spinner>
                 </div>
@@ -73,8 +83,8 @@
                 this.isModalUpPartner = true;
             },
             deletePartner: function (partner) {
-                this.$http.delete(`http://172.20.0.3/api/partners/?${partner.id}`).then(res => {
-                    this.partners.splice(this.partners.indexOf(partner), 1)
+                this.$http.delete(`http://172.20.0.3/api/partners/${partner.id}`).then(res => {
+                    this.partners.data.splice(this.partners.data.indexOf(partner), 1)
                 })
             },
             incPage: function() {

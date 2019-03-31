@@ -8,7 +8,13 @@
             <div class="modal-body">
                 <div class="form-group" v-for="field in action[view].fields" :key="field.id">
                     <label :for="field.filedId">{{field.name}}</label>
-                    <input class="form-control" :type="field.type" :id="field.filedId" :placeholder="field.name" v-model="model[field.model]"/>
+                    <div class="tags-help" v-if="field.type === 'tags'">
+                        <input class="form-control" type="text" @keyup="helpTags" v-model="model.helpT" @focus="showHelp" @blur="fadeHelp"> 
+                        <div class="help-array form-group" id="help-array">
+                            <span class="form-control" style="font-size: 13px;" v-for="help in model.helpMe">{{}}</span>
+                        </div>
+                    </div>
+                    <input class="form-control" v-else :type="field.type" :id="field.filedId" :placeholder="field.name" v-model="model[field.model]"/>
                 </div>
             </div>
             <div class="modal-footer">
@@ -24,6 +30,8 @@
         data() {
             return {
                 model: {
+                    helpMe: null,
+                    helpT: '',
                     name: '',
                     beginDate: '',
                     endDate: '',
@@ -31,7 +39,7 @@
                     inn: '',
                     site: '',
                     surname: '',
-                    mail: '',
+                    email: '',
                     patronymic: '',
                     phone: ''
                 },
@@ -111,12 +119,15 @@
                                 name: 'Email',
                                 type: 'mail',
                                 filedId: 'field-mail',
-                                model: 'mail'
+                                model: 'email'
+                            },
+                            {
+                                name: 'Описание',
+                                type: 'text',
+                                filedId: 'field-description',
+                                model: 'description'
                             },
                         ]
-                    },
-                    'tags': {
-                        title: 'Создание нового теги'
                     },
                     'users': {
                         title: 'Создание нового пользователя'
@@ -131,6 +142,22 @@
             }
         },
         methods: {
+            fadeHelp: function() {
+                document.getElementById('help-array').style.display = 'none'
+            },
+            showHelp: function() {
+                if (this.model.helpMe) {
+                    document.getElementById('help-array').style.display = 'block'
+                }
+            },
+            helpTags: function() {
+                this.$http.get(`http://172.20.0.3/api/tags/search?q=${this.model.helpT}`).then(res => {
+                    this.model.helpMe = res.body;
+                    if (this.model.helpMe.length > 0) {
+                        document.getElementById('help-array').style.display = 'block'
+                    }
+                })
+            },
             closeModal: function(){
                 this.$parent.$emit('fadeModal', false)
             },
@@ -147,8 +174,38 @@
                     }, e => {
                         alert('Во время создания произошла ошибка')
                     })
+                } else if (this.view === 'partners') {
+                    this.$http.post('http://172.20.0.3/api/partners', {
+                        name: this.model.name,
+                        inn: this.model.inn,
+                        site: this.model.site,
+                        surname: this.model.surname,
+                        patronymic: this.model.patronymic,
+                        phone: this.model.phone,
+                        email: this.model.email,
+                        description: this.model.description
+                    }).then(res => {
+                        alert('Создание прошло успешно');
+                        this.closeModal()
+                    }, e => {
+                        alert('Во время создания произошла ошибка')
+                    })
                 }
             }
         }
     }
 </script>
+<style lang="scss">
+    /*.tags-help {*/
+        /*position: relative;*/
+    /*}*/
+    .help-array {
+        overflow-y: scroll;
+        height: 100px;
+        display: none;
+        .form-control {
+            z-index: 1050;
+            font-size: 17px;
+        }
+    }
+</style>
