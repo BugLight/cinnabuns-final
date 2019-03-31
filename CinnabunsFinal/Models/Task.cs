@@ -16,6 +16,9 @@ namespace CinnabunsFinal.Models
         // Description of task
         public string Description { get; set; }
 
+        // If task is complited - True, other - False
+        public bool Completed { get; set; } = false;
+
         // Id of responsible user
         public int ResponsibleId { get; set; }
         [ForeignKey("ResponsibleId")]

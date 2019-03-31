@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Identity;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -28,6 +29,9 @@ namespace CinnabunsFinal.Models
         public string Patronymic { get; set; }
         // Phone of user
         public string Phone { get; set; }
+
+        [JsonIgnore]
+        public new string PasswordHash { get; set; }
 
         public static User GetCurrentUser(UserManager<User> userManager, ClaimsPrincipal principal)
         {
