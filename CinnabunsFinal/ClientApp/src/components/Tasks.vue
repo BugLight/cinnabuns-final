@@ -6,6 +6,8 @@
         </div>
         <b-row>
             <b-col md="4">
+                <b-form-select :options="taskOptions" v-model="filterMyTasks" @change="getTasks">
+                </b-form-select>
                 <b-list-group v-if="tasks">
                     <b-list-group-item style="cursor: pointer" v-for="task in tasks" @click="setCurrentTask(task)" :active="task == currentTask">
                         {{task.name}} <span v-if="task.completed">(Выполнена)</span>
@@ -66,12 +68,18 @@
             return {
                 currentTask: null,
                 tasks: null,
-                isModelNewTask: false
+                isModelNewTask: false,
+                filterMyTasks: true,
+                taskOptions: [
+                    { text: 'Мои задачи', value: true },
+                    { text: 'Все задачи', value: false }
+                ]
             };
         },
         methods: {
             getTasks() {
-                this.$http.get('/api/tasks')
+                let uid = this.$store.getters.uid;
+                this.$http.get('/api/tasks' + this.filterMyTasks ? `?responsibleId=${uid}` : '')
                     .then(res => res.json())
                     .then(json => {
                         let tasks = json.data;
