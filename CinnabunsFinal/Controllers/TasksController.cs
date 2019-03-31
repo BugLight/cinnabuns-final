@@ -100,6 +100,20 @@ namespace CinnabunsFinal.Controllers
             return task;
         }
 
+        [HttpPost("{id}/complete")]
+        [Authorize]
+        public ActionResult CompleteTask(int id)
+        {
+            var task = context.Tasks.Find(id);
+
+            if (task == null)
+                return NotFound();
+
+            task.Completed = true;
+            context.SaveChanges();
+            return Ok();
+        }
+
         // Function for deleting task
         [HttpDelete("{id}")]
         public ActionResult DeleteTask(int id)

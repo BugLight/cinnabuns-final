@@ -7,7 +7,7 @@
             <b-col md="4">
                 <b-list-group v-if="tasks">
                     <b-list-group-item style="cursor: pointer" v-for="task in tasks" @click="setCurrentTask(task)" :active="task == currentTask">
-                        {{task.name}}
+                        {{task.name}} <span v-if="task.completed">(Выполнена)</span>
                     </b-list-group-item>
                 </b-list-group>
                 <div v-else>
@@ -46,7 +46,7 @@
                         </p>
                     </b-card-text>
 
-                    <b-button variant="success">Завершить</b-button>
+                    <b-button variant="success" v-if="!currentTask.completed" @click="completeTask">Завершить</b-button>
                 </b-card>
             </b-col>
         </b-row>
@@ -66,7 +66,7 @@
         },
         methods: {
             getTasks() {
-                this.$http.get('/api/tasks')
+                this.$http.get('http://localhost:5000/api/tasks')
                     .then(res => res.json())
                     .then(json => {
                         let tasks = json.data;
@@ -77,16 +77,21 @@
             },
             setCurrentTask(task) {
                 this.currentTask = task;
-                this.$http.get(`/api/partners/${task.partnerId}`)
+                this.$http.get(`http://localhost:5000/api/partners/${task.partnerId}`)
                     .then(res => res.json())
                     .then(partner => {
                         this.currentTask.partner = partner;
-                        return this.$http.get(`/api/events/${task.eventId}`);
+                        return this.$http.get(`http://localhost:5000/api/events/${task.eventId}`);
                     })
                     .then(res => res.json())
                     .then(event => {
                         this.currentTask.event = event;
                     })
+                    .catch(e => alert('При получении даных произошла ошибка'));
+            },
+            completeTask() {
+                this.$http.post(`http://localhost:5000/api/tasks/${this.currentTask.id}/complete`)
+                    .then(res => this.currentTask.completed = true)
                     .catch(e => alert('При получении даных произошла ошибка'));
             }
         },
