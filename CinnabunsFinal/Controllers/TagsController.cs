@@ -1,7 +1,9 @@
 ﻿using CinnabunsFinal.DTO;
 using CinnabunsFinal.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 namespace CinnabunsFinal.Controllers
@@ -20,10 +22,11 @@ namespace CinnabunsFinal.Controllers
         [HttpGet]
         public PageResult<Tag> GetTags([FromQuery] PageFrame pageFrame)
         {
+            var q = context.Tags.Include(c => c.TagPartners);
             return new PageResult<Tag>
             {
-                Data = new PageFrameDb<Tag>().FrameDb(context.Tags.AsQueryable(), pageFrame).ToList(),
-                TotalCount = context.Tags.Count()
+                Data = new PageFrameDb<Tag>().FrameDb(q, pageFrame).ToList(),
+                TotalCount = q.Count()
             };
         }
 
@@ -37,7 +40,7 @@ namespace CinnabunsFinal.Controllers
             context.Tags.Add(tag);
             context.SaveChanges();
 
-            return tag;
+            return context.Tags.Include(c => c.TagPartners).FirstOrDefault(c => c.Id == tag.Id);
         }
 
         // Function for editing tag
@@ -55,7 +58,7 @@ namespace CinnabunsFinal.Controllers
             tag.Name = newTag.Name;
             context.SaveChanges();
 
-            return tag;
+            return context.Tags.Include(c => c.TagPartners).FirstOrDefault(c => c.Id == tag.Id);
         }
 
         // Function for deleting tag
