@@ -2,6 +2,7 @@
     <b-container fluid>
         <div class="title-row">
             <h1>Задачи</h1>
+            <b-button variant="success" @click="isModelNewTask = true">Создать задачу</b-button>
         </div>
         <b-row>
             <b-col md="4">
@@ -50,6 +51,9 @@
                 </b-card>
             </b-col>
         </b-row>
+        <div v-bind:class="`modal ${isModelNewTask ? 'show' : 'fade'}`">
+            <modal-create view="tasks"></modal-create>
+        </div>
     </b-container>
 </template>
 
@@ -61,12 +65,13 @@
         data() {
             return {
                 currentTask: null,
-                tasks: null
+                tasks: null,
+                isModelNewTask: false
             };
         },
         methods: {
             getTasks() {
-                this.$http.get('http://localhost:5000/api/tasks')
+                this.$http.get('/api/tasks')
                     .then(res => res.json())
                     .then(json => {
                         let tasks = json.data;
@@ -77,11 +82,11 @@
             },
             setCurrentTask(task) {
                 this.currentTask = task;
-                this.$http.get(`http://localhost:5000/api/partners/${task.partnerId}`)
+                this.$http.get(`/api/partners/${task.partnerId}`)
                     .then(res => res.json())
                     .then(partner => {
                         this.currentTask.partner = partner;
-                        return this.$http.get(`http://localhost:5000/api/events/${task.eventId}`);
+                        return this.$http.get(`/api/events/${task.eventId}`);
                     })
                     .then(res => res.json())
                     .then(event => {
@@ -90,19 +95,29 @@
                     .catch(e => alert('При получении даных произошла ошибка'));
             },
             completeTask() {
-                this.$http.post(`http://localhost:5000/api/tasks/${this.currentTask.id}/complete`)
+                this.$http.post(`/api/tasks/${this.currentTask.id}/complete`)
                     .then(res => this.currentTask.completed = true)
                     .catch(e => alert('При получении даных произошла ошибка'));
             }
         },
         beforeMount() {
             this.getTasks();
-        }
+        },
+        mounted() {
+            this.$on('fadeModal', (is) => {
+                this.isModelNewTask = is;
+                this.getTasks();
+            })
+        },
     }
 </script>
 
 <style scoped>
     .task-description {
         margin-top: 15px;
+    }
+
+    .modal {
+        overflow: scroll;
     }
 </style>

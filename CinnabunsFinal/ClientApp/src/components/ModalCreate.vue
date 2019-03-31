@@ -6,7 +6,7 @@
                 <button type="button" class="close" @click="closeModal">×</button>
             </div>
             <div class="modal-body">
-                <div class="form-group" v-for="field in action[view].fileds" :key="field.id">
+                <div class="form-group" v-for="field in action[view].fields" :key="field.id">
                     <label :for="field.filedId">{{field.name}}</label>
                     <input class="form-control" :type="field.type" :id="field.filedId" :placeholder="field.name" v-model="model[field.model]"/>
                 </div>
@@ -28,11 +28,14 @@
                     beginDate: '',
                     endDate: '',
                     description: '',
+                    responsibleId: '',
+                    eventId: '',
+                    partnerId: ''
                 },
                 action: {
                     'events': {
                         title: 'Создание нового события',
-                        fileds: [
+                        fields: [
                             {
                                 name: 'Название',
                                 type: 'text',
@@ -60,7 +63,45 @@
                         ]
                     },
                     'tasks': {
-                        title: 'Создание новой задачи'
+                        title: 'Создание новой задачи',
+                        fields: [
+                            {
+                                name: 'Название',
+                                type: 'text',
+                                filedId: 'field-name',
+                                model: 'name'
+                            },
+                            {
+                                name: 'Выполнить до',
+                                type: 'date',
+                                filedId: 'field-end_date',
+                                model: 'endDate'
+                            },
+                            {
+                                name: 'Ответственный Id',
+                                type: 'text',
+                                filedId: 'field-responsible_id',
+                                model: 'responsibleId'
+                            },
+                            {
+                                name: 'Событие Id',
+                                type: 'text',
+                                filedId: 'field-event_id',
+                                model: 'eventId'
+                            },
+                            {
+                                name: 'Партнер Id',
+                                type: 'text',
+                                filedId: 'field-partner_id',
+                                model: 'partnerId'
+                            },
+                            {
+                                name: 'Описание',
+                                type: 'text',
+                                filedId: 'field-description',
+                                model: 'description'
+                            }
+                        ]
                     },
                     'partners': {
                         title: 'Создание нового партнера'
@@ -97,6 +138,20 @@
                     }, e => {
                         alert('Во время создания произошла ошибка')
                     })
+                } else if (this.view === 'tasks') {
+                    this.$http.post('/api/tasks', {
+                        name: this.model.name,
+                        endDate: this.model.endDate,
+                        responsibleId: this.model.responsibleId,
+                        eventId: this.model.eventId,
+                        partnerId: this.model.partnerId,
+                        description: this.model.description
+                    }).then(res => {
+                        alert('Задача создана');
+                        this.closeModal();
+                    }, e => {
+                        alert('Во время создания произошла ошибка');
+                    });
                 }
             }
         }
