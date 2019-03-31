@@ -17,14 +17,12 @@ namespace CinnabunsFinal.Models
         public string Description { get; set; }
 
         // Id of responsible user
-        [ForeignKey("User")]
         public int ResponsibleId { get; set; }
         [ForeignKey("ResponsibleId")]
         public User Responsible { get; set; }
         // Id of assigner user
-        [ForeignKey("User")]
         public int AssignerId { get; set; }
-        [ForeignKey("User")]
+        [ForeignKey("AssignerId")]
         public User Assigner { get; set; }
         // Id of partner
         public int PartnerId { get; set; }

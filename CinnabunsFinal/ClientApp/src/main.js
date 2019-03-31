@@ -1,6 +1,10 @@
 import Vue from 'vue'
 import Resource from 'vue-resource';
 import BootstrapVue from 'bootstrap-vue'
+import Datepicker from 'vuejs-datepicker';
+import { polyfill } from 'es6-object-assign'
+
+polyfill();
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faPhone, faPaperPlane, faPen, faTrash } from '@fortawesome/free-solid-svg-icons'
@@ -15,6 +19,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 library.add(faPhone, faPaperPlane, faPen, faTrash);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
+Vue.component('date-picker', Datepicker);
 Vue.use(BootstrapVue);
 Vue.use(Resource);
 
