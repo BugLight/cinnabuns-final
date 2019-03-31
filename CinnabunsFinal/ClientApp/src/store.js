@@ -23,6 +23,10 @@ export default new Vuex.Store({
             {
                 name: 'users',
                 title: 'Пользователи'
+            },
+            {
+                name: 'interactions',
+                title: 'Взаимодействие'
             }],
             organizer: [{
                 name: 'events',

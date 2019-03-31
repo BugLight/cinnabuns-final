@@ -14,6 +14,23 @@
                             <span class="form-control" style="font-size: 13px;" v-for="help in model.helpMe">{{}}</span>
                         </div>
                     </div>
+                    <b-form-select v-else-if="field.type === 'select'" v-model="model.role">
+                        <template slot="first">
+                            <option :value="null" disabled>Выберите роль</option>
+                        </template>
+                        <option value="admin">Администратор</option>
+                        <option value="organizer">Организатор</option>
+                        <option value="volunteer">Волонтер</option>
+                    </b-form-select>
+                    <b-form-select v-else-if="field.type === 'select2'" v-model="model.type">
+                        <template slot="first">
+                            <option :value="null" disabled>Тип взаимодействия</option>
+                        </template>
+                        <option value="0">Телефонный звокнок</option>
+                        <option value="1">Email</option>
+                        <option value="2">Личная встреча</option>
+                        <option value="3">Другое</option>
+                    </b-form-select>
                     <input class="form-control" v-else :type="field.type" :id="field.filedId" :placeholder="field.name" v-model="model[field.model]"/>
                 </div>
             </div>
@@ -41,7 +58,10 @@
                     surname: '',
                     email: '',
                     patronymic: '',
-                    phone: ''
+                    phone: '',
+                    role: '',
+                    date: '',
+                    type: ''
                 },
                 action: {
                     'events': {
@@ -130,8 +150,81 @@
                         ]
                     },
                     'users': {
-                        title: 'Создание нового пользователя'
+                        title: 'Создание нового пользователя',
+                        fields: [
+                            {
+                                name: 'Имя',
+                                type: 'text',
+                                filedId: 'field-name',
+                                model: 'name'
+                            },
+                            {
+                                name: 'Фамилия',
+                                type: 'text',
+                                filedId: 'field-surname',
+                                model: 'surname'
+                            },
+                            {
+                                name: 'Отчество',
+                                type: 'text',
+                                filedId: 'field-patronymic',
+                                model: 'patronymic'
+                            },
+                            {
+                                name: 'Телефон',
+                                type: 'text',
+                                filedId: 'field-phone',
+                                model: 'phone'
+                            },
+                            {
+                                name: 'Email',
+                                type: 'text',
+                                filedId: 'field-email',
+                                model: 'email'
+                            },
+                            {
+                                name: 'Роль',
+                                type: 'select',
+                                filedId: 'field-role',
+                                model: 'role'
+                            },
+                        ]
                     },
+                    'interactions': {
+                        title: 'Создание нового взаимодействия',
+                        fields: [
+                            {
+                                name: 'Дата',
+                                type: 'date',
+                                fieldId: 'filed-date',
+                                model: 'date'
+                            },
+                            {
+                                name: 'Тип',
+                                type: 'select2',
+                                fieldId: 'filed-select',
+                                model: 'type'
+                            },
+                            {
+                                name: 'Описание',
+                                type: 'test',
+                                fieldId: 'filed-description',
+                                model: 'description'
+                            },
+                            {
+                                name: 'Id',
+                                type: 'date',
+                                fieldId: 'filed-date',
+                                model: 'date'
+                            },
+                            {
+                                name: 'Дата',
+                                type: 'date',
+                                fieldId: 'filed-date',
+                                model: 'date'
+                            }
+                        ]
+                    }
                 }
             }
         },
@@ -190,9 +283,22 @@
                     }, e => {
                         alert('Во время создания произошла ошибка')
                     })
+                } else if (this.view === 'users') {
+                    this.$http.post(`http://172.20.0.3/api/auth/register?role=${this.model.role}`, {
+                        name: this.model.name,
+                        surname: this.model.surname,
+                        patronymic: this.model.patronymic,
+                        phone: this.model.phone,
+                        email: this.model.email,
+                    }).then(res => {
+                        alert('Создание прошло успешно');
+                        this.closeModal()
+                    }, e => {
+                        alert('Во время создания произошла ошибка')
+                    })
                 }
             }
-        }
+        },
     }
 </script>
 <style lang="scss">
