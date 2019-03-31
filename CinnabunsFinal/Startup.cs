@@ -1,4 +1,6 @@
-﻿using CinnabunsFinal.Models;
+﻿using AutoMapper;
+using CinnabunsFinal.DTO;
+using CinnabunsFinal.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -107,6 +109,14 @@ namespace CinnabunsFinal
                 if (env.IsDevelopment())
                     configuration.UseVueCli("serve", 3000);
             });
+
+            Mapper.Initialize(cfg => cfg.CreateMap<UserResponse, User>()
+                .ForMember("Id", opt => opt.MapFrom(c => c.Id))
+                .ForMember("Name", opt => opt.MapFrom(c => c.Name))
+                .ForMember("Surname", opt => opt.MapFrom(c => c.Surname))
+                .ForMember("Patronymic", opt => opt.MapFrom(c => c.Patronymic))
+                .ForMember("Phone", opt => opt.MapFrom(c => c.Phone))
+                .ForMember("UserName", opt => opt.MapFrom(c => c.UserName)));
         }
     }
 }
