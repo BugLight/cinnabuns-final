@@ -54,6 +54,17 @@
         <div v-bind:class="`modal ${isModelNewTask ? 'show' : 'fade'}`">
             <modal-create view="tasks"></modal-create>
         </div>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <li class="page-item" @click="decPage">
+                    <span class="page-link">&laquo;</span>
+                </li>
+                <li class="page-item"><div class="page-link">{{activePage}} / {{countPage}}</div></li>
+                <li class="page-item" @click="incPage">
+                    <span class="page-link">&raquo;</span>
+                </li>
+            </ul>
+        </nav>
     </b-container>
 </template>
 
@@ -66,12 +77,16 @@
             return {
                 currentTask: null,
                 tasks: null,
-                isModelNewTask: false
+                isModelNewTask: false,
+                limit: 50,
+                offset: 0,
+                countPage: 0,
+                activePage: 1
             };
         },
         methods: {
             getTasks() {
-                this.$http.get('/api/tasks')
+                this.$http.get('http://172.20.0.3/api/tasks')
                     .then(res => res.json())
                     .then(json => {
                         let tasks = json.data;
@@ -80,13 +95,27 @@
                     })
                     .catch(e => alert('При получении даных произошла ошибка'));
             },
+            incPage: function() {
+                if (this.activePage < this.countPage) {
+                    this.activePage += 1;
+                    this.offset += this.limit;
+                    this.getTasks()
+                }
+            },
+            decPage: function() {
+                if (this.activePage !== 1 && this.activePage > 1) {
+                    this.activePage -= 1;
+                    this.offset -= this.limit;
+                    this.getTasks()
+                }
+            },
             setCurrentTask(task) {
                 this.currentTask = task;
-                this.$http.get(`/api/partners/${task.partnerId}`)
+                this.$http.get(`http://172.20.0.3/api/partners/${task.partnerId}`)
                     .then(res => res.json())
                     .then(partner => {
                         this.currentTask.partner = partner;
-                        return this.$http.get(`/api/events/${task.eventId}`);
+                        return this.$http.get(`http://172.20.0.3/api/events/${task.eventId}`);
                     })
                     .then(res => res.json())
                     .then(event => {

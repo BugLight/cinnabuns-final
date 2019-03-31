@@ -1,4 +1,5 @@
-﻿using CinnabunsFinal.DTO;
+﻿using AutoMapper;
+using CinnabunsFinal.DTO;
 using CinnabunsFinal.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -20,18 +21,19 @@ namespace CinnabunsFinal.Controllers
 
         // Functions for getting users
         [HttpGet]
-        public PageResult<User> GetUsers([FromQuery] PageFrame pageFrame)
+        public PageResult<UserResponse> GetUsers([FromQuery] PageFrame pageFrame)
         {
-            return new PageResult<User>
+            return new PageResult<UserResponse>
             {
-                Data = new PageFrameDb<User>().FrameDb(context.Users.AsQueryable(), pageFrame).ToList(),
+                Data = Mapper.Map<List<UserResponse>>(
+                    new PageFrameDb<User>().FrameDb(context.Users.AsQueryable(), pageFrame).ToList()),
                 TotalCount = context.Users.Count()
             };
         }
 
         // Functions for adding user
         [HttpPost]
-        public ActionResult<User> AddUser([FromBody] User user)
+        public ActionResult<UserResponse> AddUser([FromBody] User user)
         {
             if (user == null)
                 return BadRequest();
@@ -39,12 +41,12 @@ namespace CinnabunsFinal.Controllers
             context.Users.Add(user);
             context.SaveChanges();
 
-            return user;
+            return Mapper.Map<UserResponse>(user);
         }
 
         // Function for editing user
         [HttpPut("{id}")]
-        public ActionResult<User> EditUser([FromBody] User newUser, int id)
+        public ActionResult<UserResponse> EditUser([FromBody] User newUser, int id)
         {
             if (newUser == null)
                 return BadRequest();
@@ -61,7 +63,7 @@ namespace CinnabunsFinal.Controllers
             user.UserName = newUser.UserName;
             context.SaveChanges();
 
-            return user;
+            return Mapper.Map<UserResponse>(user);
         }
 
         // Function for deleting user
