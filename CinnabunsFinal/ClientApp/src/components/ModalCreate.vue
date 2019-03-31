@@ -53,6 +53,10 @@
                     beginDate: '',
                     endDate: '',
                     description: '',
+                    responsibleId: '',
+                    contactId: '',
+                    eventId: '',
+                    partnerId: '',
                     inn: '',
                     site: '',
                     surname: '',
@@ -94,7 +98,45 @@
                         ]
                     },
                     'tasks': {
-                        title: 'Создание новой задачи'
+                        title: 'Создание новой задачи',
+                        fields: [
+                            {
+                                name: 'Название',
+                                type: 'text',
+                                filedId: 'field-name',
+                                model: 'name'
+                            },
+                            {
+                                name: 'Выполнить до',
+                                type: 'date',
+                                filedId: 'field-end_date',
+                                model: 'endDate'
+                            },
+                            {
+                                name: 'Ответственный Id',
+                                type: 'text',
+                                filedId: 'field-responsible_id',
+                                model: 'responsibleId'
+                            },
+                            {
+                                name: 'Событие Id',
+                                type: 'text',
+                                filedId: 'field-event_id',
+                                model: 'eventId'
+                            },
+                            {
+                                name: 'Партнер Id',
+                                type: 'text',
+                                filedId: 'field-partner_id',
+                                model: 'partnerId'
+                            },
+                            {
+                                name: 'Описание',
+                                type: 'text',
+                                filedId: 'field-description',
+                                model: 'description'
+                            }
+                        ]
                     },
                     'partners': {
                         title: 'Создание нового партнера',
@@ -212,16 +254,16 @@
                                 model: 'description'
                             },
                             {
-                                name: 'Id',
-                                type: 'date',
-                                fieldId: 'filed-date',
-                                model: 'date'
+                                name: 'Ответственный Id',
+                                type: 'text',
+                                fieldId: 'filed-res-id',
+                                model: 'responsibleId'
                             },
                             {
-                                name: 'Дата',
-                                type: 'date',
-                                fieldId: 'filed-date',
-                                model: 'date'
+                                name: 'Id контакта взаимодействия',
+                                type: 'text',
+                                fieldId: 'filed-con-id',
+                                model: 'contactId'
                             }
                         ]
                     }
@@ -244,7 +286,7 @@
                 }
             },
             helpTags: function() {
-                this.$http.get(`http://172.20.0.3/api/tags/search?q=${this.model.helpT}`).then(res => {
+                this.$http.get(`/api/tags/search?q=${this.model.helpT}`).then(res => {
                     this.model.helpMe = res.body;
                     if (this.model.helpMe.length > 0) {
                         document.getElementById('help-array').style.display = 'block'
@@ -256,7 +298,7 @@
             },
             createObject: function() {
                 if (this.view === 'events') {
-                    this.$http.post('http://172.20.0.3/api/events', {
+                    this.$http.post('/api/events', {
                         name: this.model.name,
                         beginDate: this.model.beginDate,
                         endDate: this.model.endDate,
@@ -267,8 +309,22 @@
                     }, e => {
                         alert('Во время создания произошла ошибка')
                     })
+                } else if (this.view === 'tasks') {
+                    this.$http.post('/api/tasks', {
+                        name: this.model.name,
+                        endDate: this.model.endDate,
+                        responsibleId: this.model.responsibleId,
+                        eventId: this.model.eventId,
+                        partnerId: this.model.partnerId,
+                        description: this.model.description
+                    }).then(res => {
+                        alert('Задача создана');
+                        this.closeModal();
+                    }, e => {
+                        alert('Во время создания произошла ошибка');
+                    });
                 } else if (this.view === 'partners') {
-                    this.$http.post('http://172.20.0.3/api/partners', {
+                    this.$http.post('/api/partners', {
                         name: this.model.name,
                         inn: this.model.inn,
                         site: this.model.site,
@@ -284,12 +340,25 @@
                         alert('Во время создания произошла ошибка')
                     })
                 } else if (this.view === 'users') {
-                    this.$http.post(`http://172.20.0.3/api/auth/register?role=${this.model.role}`, {
+                    this.$http.post(`/api/auth/register?role=${this.model.role}`, {
                         name: this.model.name,
                         surname: this.model.surname,
                         patronymic: this.model.patronymic,
                         phone: this.model.phone,
                         email: this.model.email,
+                    }).then(res => {
+                        alert('Создание прошло успешно');
+                        this.closeModal()
+                    }, e => {
+                        alert('Во время создания произошла ошибка')
+                    })
+                } else if (this.view === 'interactions') {
+                    this.$http.post(`/api/interactions`, {
+                        date: this.model.date,
+                        type: this.model.type,
+                        description: this.model.description,
+                        responsibleId: this.model.responsibleId,
+                        contactId: this.model.contactId,
                     }).then(res => {
                         alert('Создание прошло успешно');
                         this.closeModal()

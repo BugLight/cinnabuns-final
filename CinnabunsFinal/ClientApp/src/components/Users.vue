@@ -77,7 +77,7 @@
                 this.isModalUpUser = true;
             },
             deleteUsers: function (user) {
-                this.$http.delete(`http://172.20.0.3/api/users/${user.id}`).then(res => {
+                this.$http.delete(`/api/users/${user.id}`).then(res => {
                     this.users.data.splice(this.users.data.indexOf(user), 1)
                 })
             },
@@ -96,7 +96,7 @@
                 }
             },
             getUsers: function () {
-                this.$http.get(`http://172.20.0.3/api/users/?limit=${this.limit}&offset=${this.offset}`).then(res => {
+                this.$http.get(`/api/users/?limit=${this.limit}&offset=${this.offset}`).then(res => {
                     this.users = res.body;
                     this.countPage = Math.floor(this.users['totalCount'] / this.limit + ( this.users['totalCount'] % this.limit !== 0 ? 1 : 0));
                 }, e => {

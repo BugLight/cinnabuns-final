@@ -6,7 +6,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
-        jwtToket: localStorage.getItem('jwtToken') || '',
+        jwtToken: localStorage.getItem('jwtToken') || '',
         actions: {
             admin: [{
                 name: 'events',
@@ -76,7 +76,10 @@ export default new Vuex.Store({
             return state.jwtToken;
         },
         role (state) {
-            return jwt_decode('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJyb2xlIjoiYWRtaW4ifQ.RAsF_THrV3ujtaBIaauKlTltnPYjowkp6jQ-dCls1GI').role;
+            return state.jwtToken ? jwt_decode(state.jwtToken).role : '';
+        },
+        uid (state) {
+            return state.jwtToken ? jwt_decode(state.jwtToken).sub : '';
         },
         roles (state) {
             return state.roles;

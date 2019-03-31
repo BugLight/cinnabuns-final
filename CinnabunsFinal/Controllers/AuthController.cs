@@ -1,12 +1,16 @@
-﻿using CinnabunsFinal.DTO;
+﻿using AutoMapper;
+using CinnabunsFinal.DTO;
 using CinnabunsFinal.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,15 +20,17 @@ namespace CinnabunsFinal.Controllers
     [Route("api/auth")]
     public class AuthController : Controller
     {
+        private readonly AppContext context;
         private readonly IConfiguration configuration;
         private readonly UserManager<User> userManager;
         private readonly RoleManager<IdentityRole<int>> roleManager;
 
         private const string RoleClaim = "role";
 
-        public AuthController(IConfiguration configuration, UserManager<User> userManager,
+        public AuthController(AppContext context, IConfiguration configuration, UserManager<User> userManager,
                               RoleManager<IdentityRole<int>> roleManager)
         {
+            this.context = context;
             this.configuration = configuration;
             this.userManager = userManager;
             this.roleManager = roleManager;
@@ -63,6 +69,66 @@ namespace CinnabunsFinal.Controllers
             {
                 AccessToken = new JwtSecurityTokenHandler().WriteToken(token)
             };
+        }
+
+        [HttpPost("register")]
+        //[Authorize(Roles="admin")]
+        public JsonResult Register([FromBody]UserResponse user, [FromQuery]string role, [FromQuery]string to)
+        {
+            if (!(new[] { "admin", "organizer", "volunteer" }).ToList().Contains(role))
+                return new JsonResult(new { status = "failed" });
+
+            var claims = new Claim[]
+            {
+                new Claim("user", JsonConvert.SerializeObject(user)),
+                new Claim("role", role)
+            };
+            var signingKey = configuration["SECRETKEY"];
+            var tokenData = new JwtSecurityToken(
+                issuer: "cinnabuns-register",
+                claims: claims,
+                notBefore: DateTime.Now,
+                expires: DateTime.Now.AddHours(72),
+                signingCredentials: new SigningCredentials(
+                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey)),
+                    SecurityAlgorithms.HmacSha256));
+            var token = new JwtSecurityTokenHandler().WriteToken(tokenData);
+
+            var url = string.Format("http://best-hack.prod.kistriver.net/api/auth/signup/{0}", token);
+
+            MailMessage mail = new MailMessage(configuration["MAILFROM"], to);
+            SmtpClient client = new SmtpClient();
+            client.Port = Int32.Parse(configuration["MAILPORT"]);
+            client.EnableSsl = true;
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
+            client.UseDefaultCredentials = false;
+            client.Host = configuration["MAILHOST"];
+            client.Timeout = 5000;
+            client.Credentials = new System.Net.NetworkCredential(configuration["MAILFROM"], configuration["MAILPASS"]);
+            mail.BodyEncoding = UTF8Encoding.UTF8;
+            mail.Subject = "Регистрация";
+            mail.Body = string.Format("Ссылка для регистрации: <a href='{0}'>{0}</a>", url);
+            mail.IsBodyHtml = true;
+            client.Send(mail);
+
+            return new JsonResult(new {
+                token = url
+            });
+        }
+
+        [HttpGet("signup/{token}")]
+        public UserResponse SignUp(string token)
+        {
+            var jwt = new JwtSecurityTokenHandler().ReadToken(token) as JwtSecurityToken;
+            var claims = jwt.Claims;
+            var role = claims.First(c => c.Type == "role").Value;
+            var userData = claims.First(c => c.Type == "user").Value;
+
+            var user = JsonConvert.DeserializeObject<User>(userData);
+            context.Add(user);
+            context.SaveChanges();
+
+            return Mapper.Map<UserResponse>(user);
         }
     }
 }

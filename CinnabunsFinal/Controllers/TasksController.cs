@@ -35,7 +35,7 @@ namespace CinnabunsFinal.Controllers
 
         // Functions for getting tasks
         [HttpGet]
-        public PageResult<Task> GetTasks([FromQuery] PageFrame pageFrame, int? assignerId)
+        public PageResult<Task> GetTasks([FromQuery] PageFrame pageFrame, int? assignerId, int? responsibleId)
         {
             var q = context.Tasks
                 .Include(t => t.Assigner)
@@ -45,6 +45,10 @@ namespace CinnabunsFinal.Controllers
             if (assignerId != null)
             {
                 q = q.Where(t => t.AssignerId == assignerId);
+            }
+            if (responsibleId != null)
+            {
+                q = q.Where(t => t.ResponsibleId == responsibleId);
             }
 
             return new PageResult<Task>
@@ -98,6 +102,20 @@ namespace CinnabunsFinal.Controllers
             context.SaveChanges();
 
             return task;
+        }
+
+        [HttpPost("{id}/complete")]
+        [Authorize]
+        public ActionResult CompleteTask(int id)
+        {
+            var task = context.Tasks.Find(id);
+
+            if (task == null)
+                return NotFound();
+
+            task.Completed = true;
+            context.SaveChanges();
+            return Ok();
         }
 
         // Function for deleting task

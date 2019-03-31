@@ -138,7 +138,7 @@
             },
             updateObject: function() {
                 if (this.view === 'events') {
-                    this.$http.put(`http://172.20.0.3/api/events/${this.copyPattern.id}`, {
+                    this.$http.put(`/api/events/${this.copyPattern.id}`, {
                         name: this.copyPattern.name,
                         beginDate: this.copyPattern.beginDate,
                         endDate: this.copyPattern.endDate,
@@ -150,7 +150,7 @@
                         alert('Во время изминения произошла ошибка');
                     })
                 } else if (this.view === 'partners') {
-                    this.$http.put(`http://172.20.0.3/api/partners/${this.copyPattern.id}`, {
+                    this.$http.put(`/api/partners/${this.copyPattern.id}`, {
                         name: this.copyPattern.name,
                         inn: this.copyPattern.inn,
                         site: this.copyPattern.site,

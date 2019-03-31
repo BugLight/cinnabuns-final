@@ -83,7 +83,7 @@
                 this.isModalUpPartner = true;
             },
             deletePartner: function (partner) {
-                this.$http.delete(`http://172.20.0.3/api/partners/${partner.id}`).then(res => {
+                this.$http.delete(`/api/partners/${partner.id}`).then(res => {
                     this.partners.data.splice(this.partners.data.indexOf(partner), 1)
                 })
             },
@@ -102,7 +102,7 @@
                 }
             },
             getPartner: function () {
-                this.$http.get(`http://172.20.0.3/api/partners/?limit=${this.limit}&offset=${this.offset}`).then(res => {
+                this.$http.get(`/api/partners/?limit=${this.limit}&offset=${this.offset}`).then(res => {
                     this.partners = res.body;
                     this.countPage = Math.floor(this.partners['totalCount'] / this.limit + ( this.partners['totalCount'] % this.limit !== 0 ? 1 : 0));
                 }, e => {

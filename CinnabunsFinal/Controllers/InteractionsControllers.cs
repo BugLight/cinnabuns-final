@@ -22,7 +22,10 @@ namespace CinnabunsFinal.Controllers
         [Authorize(Roles="admin,organizer")]
         public PageResult<Interaction> GetInteractions([FromQuery] PageFrame pageFrame)
         {
-            var q = context.Interactions.AsQueryable();
+            var q = context.Interactions
+                .Include(i => i.Contact)
+                .Include(i => i.Responsible)
+                .AsQueryable();
 
             return new PageResult<Interaction>
             {

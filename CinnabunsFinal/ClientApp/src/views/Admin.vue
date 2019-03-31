@@ -1,6 +1,6 @@
 <template>
     <div class="main">
-        <div class="container-fluid" v-if="!isAuthenticated">
+        <div class="container-fluid" v-if="isAuthenticated">
             <div v-bind:id="role" v-if="role === roles.admin">
                 <admin-header></admin-header>
                 <events v-if="activeAdminPage === 'events'"></events>

@@ -59,7 +59,7 @@
             </ul>
         </nav>
         <div v-bind:class="`modal ${isModelNewInt ? 'show' : 'fade'}`">
-            <modal-create view="partners"></modal-create>
+            <modal-create view="interactions"></modal-create>
         </div>
     </b-container>
 </template>
@@ -82,7 +82,7 @@
         },
         methods: {
             getInteractions() {
-                this.$http.get('http://172.20.0.3/api/interactions')
+                this.$http.get('/api/interactions')
                     .then(res => res.json())
                     .then(json => {
                         let interactions = json.data;
